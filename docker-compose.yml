@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: agenda_postgres
+    environment:
+      POSTGRES_USER: agenda_user
+      POSTGRES_PASSWORD: agenda_pass
+      POSTGRES_DB: agenda_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - agenda_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: agenda_backend
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: agenda_db
+      DB_USER: agenda_user
+      DB_PASSWORD: agenda_pass
+    restart: unless-stopped
+
+volumes:
+  agenda_pgdata:
