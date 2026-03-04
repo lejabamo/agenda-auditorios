@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from ..db import SessionLocal
 from ..services.auditorio_service import AuditorioService
+from ..auth.decorators import admin_required
 
 auditorio_bp = Blueprint('auditorios', __name__, url_prefix='/api/auditorios')
 
@@ -8,7 +9,8 @@ def get_service():
     session = SessionLocal()
     return AuditorioService(session), session
 
-@auditorio_bp.route('/', methods=['POST'])
+@auditorio_bp.route('/', methods=['POST'], strict_slashes=False)
+@admin_required
 def create_auditorio():
     service, session = get_service()
     try:
@@ -28,8 +30,9 @@ def create_auditorio():
     finally:
         session.close()
 
-@auditorio_bp.route('/', methods=['GET'])
+@auditorio_bp.route('/', methods=['GET'], strict_slashes=False)
 def list_auditorios():
+    # Public route - no @admin_required
     service, session = get_service()
     try:
         auditorios = service.get_all()
@@ -47,6 +50,7 @@ def list_auditorios():
 
 @auditorio_bp.route('/<int:id>', methods=['GET'])
 def get_auditorio(id):
+    # Public route - no @admin_required
     service, session = get_service()
     try:
         auditorio = service.get_by_id(id)
@@ -65,6 +69,7 @@ def get_auditorio(id):
         session.close()
 
 @auditorio_bp.route('/<int:id>', methods=['PUT'])
+@admin_required
 def update_auditorio(id):
     service, session = get_service()
     try:
@@ -84,6 +89,7 @@ def update_auditorio(id):
         session.close()
 
 @auditorio_bp.route('/<int:id>', methods=['DELETE'])
+@admin_required
 def delete_auditorio(id):
     service, session = get_service()
     try:

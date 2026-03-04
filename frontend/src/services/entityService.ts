@@ -1,44 +1,47 @@
-import { Entity } from '@/types/models/entity';
-import { MOCK_ENTITIES } from './mocks/entities';
+import type { Entity } from '@/types/models/entity';
+
 
 // Simula un retardo de red
-const SIMULATED_DELAY_MS = 400;
+const API_URL = 'http://localhost:5000/api';
 
 export const entityService = {
     /**
-     * Busca entidades por nombre o sigla (mock).
+     * Busca entidades por nombre o sigla (desde Backend).
      * @param query Texto a buscar
      * @returns Promesa con lista de entidades filtradas
      */
     searchEntities: async (query: string): Promise<Entity[]> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                if (!query.trim()) {
-                    resolve([]);
-                    return;
-                }
+        if (!query.trim()) return [];
 
-                const lowerQuery = query.toLowerCase();
+        try {
+            const response = await fetch(`${API_URL}/dependencias/`);
+            if (!response.ok) throw new Error('Error al cargar dependencias');
 
-                const results = MOCK_ENTITIES.filter((entity) => {
-                    const matchName = entity.officialName.toLowerCase().includes(lowerQuery);
-                    const matchAcronym = entity.acronym?.toLowerCase().includes(lowerQuery);
-                    return matchName || matchAcronym;
-                });
+            const data = await response.json();
 
-                // Ordenar: Coincidencias exactas o inicio de palabra primero (mock simple logic)
-                results.sort((a, b) => {
-                    const aStarts = a.officialName.toLowerCase().startsWith(lowerQuery);
-                    const bStarts = b.officialName.toLowerCase().startsWith(lowerQuery);
-                    if (aStarts && !bStarts) return -1;
-                    if (!aStarts && bStarts) return 1;
-                    return 0;
-                });
+            // Map backend "Dependencia" to frontend "Entity"
+            // Backend: { id, nombre, tipo, sigla, activa }
+            // Frontend: { id, officialName, type, isActive, acronym }
+            const entities: Entity[] = data.map((d: any) => ({
+                id: d.id.toString(), // Ensure string ID
+                officialName: d.nombre,
+                acronym: d.sigla,
+                type: d.tipo === 'INTERNA' ? 'INTERNAL' : 'EXTERNAL', // Adjust mapping as needed
+                isActive: d.activa,
+                contactPerson: undefined // Backend doesn't send this yet
+            }));
 
-                // Limitar resultados para simular paginación o límites de API
-                resolve(results.slice(0, 10));
-            }, SIMULATED_DELAY_MS);
-        });
+            // Client-side filtering (idealmente el backend filtra, pero por ahora...)
+            const lowerQuery = query.toLowerCase();
+            return entities.filter(e =>
+                e.officialName.toLowerCase().includes(lowerQuery) ||
+                (e.acronym && e.acronym.toLowerCase().includes(lowerQuery))
+            ).slice(0, 10);
+
+        } catch (error) {
+            console.error("Error fetching dependencies:", error);
+            return [];
+        }
     },
 
     /**
@@ -46,11 +49,21 @@ export const entityService = {
      * @param id ID de la entidad
      */
     getEntityById: async (id: string): Promise<Entity | undefined> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const entity = MOCK_ENTITIES.find(e => e.id === id);
-                resolve(entity);
-            }, SIMULATED_DELAY_MS);
-        });
+        try {
+            const response = await fetch(`${API_URL}/dependencias/${id}`);
+            if (!response.ok) return undefined;
+
+            const d = await response.json();
+            return {
+                id: d.id.toString(),
+                officialName: d.nombre,
+                acronym: d.sigla,
+                type: d.tipo === 'INTERNA' ? 'INTERNAL' : 'EXTERNAL',
+                isActive: d.activa
+            };
+        } catch (error) {
+            console.error("Error fetching dependency by ID:", error);
+            return undefined;
+        }
     }
 };

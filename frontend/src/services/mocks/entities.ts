@@ -1,4 +1,4 @@
-import { Entity } from '@/types/models/entity';
+import type { Entity } from '@/types/models/entity';
 
 export const MOCK_ENTITIES: Entity[] = [
     // --- Entidades Internas (Secretarías / Oficinas) ---

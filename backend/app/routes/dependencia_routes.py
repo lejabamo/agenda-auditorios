@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from ..db import SessionLocal
 from ..services.dependencia_service import DependenciaService
+from ..auth.decorators import admin_required
 
 dependencia_bp = Blueprint('dependencias', __name__, url_prefix='/api/dependencias')
 
@@ -9,6 +10,7 @@ def get_service():
     return DependenciaService(session), session
 
 @dependencia_bp.route('/', methods=['POST'])
+@admin_required
 def create_dependencia():
     service, session = get_service()
     try:
@@ -63,6 +65,7 @@ def get_dependencia(id):
         session.close()
 
 @dependencia_bp.route('/<int:id>', methods=['PUT'])
+@admin_required
 def update_dependencia(id):
     service, session = get_service()
     try:
@@ -82,6 +85,7 @@ def update_dependencia(id):
         session.close()
 
 @dependencia_bp.route('/<int:id>', methods=['DELETE'])
+@admin_required
 def delete_dependencia(id):
     service, session = get_service()
     try:

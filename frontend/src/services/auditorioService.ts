@@ -1,7 +1,6 @@
-import { Auditorio } from '@/types/models/auditorio';
-import { MOCK_AUDITORIOS } from './mocks/auditorios';
+import type { Auditorio } from '@/types/models/auditorio';
 
-const SIMULATED_DELAY_MS = 300;
+const API_URL = 'http://localhost:5000/api/auditorios';
 
 export const auditorioService = {
     /**
@@ -9,12 +8,29 @@ export const auditorioService = {
      * Útil para listados de selección o catálogos.
      */
     getActiveAuditorios: async (): Promise<Auditorio[]> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const activeAuditorios = MOCK_AUDITORIOS.filter((a) => a.activo);
-                resolve(activeAuditorios);
-            }, SIMULATED_DELAY_MS);
-        });
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error('Error al obtener auditorios');
+            }
+            const data = await response.json();
+
+            // Normalize and validates data
+            const normalizedData = Array.isArray(data) ? data.map((item: any) => ({
+                id: Number(item.id), // Ensure number
+                nombre: String(item.nombre || 'Sin nombre'),
+                ubicacion: String(item.ubicacion || ''),
+                capacidad: Number(item.capacidad || 0),
+                descripcion: item.descripcion || '',
+                activo: !!item.activo // Force boolean
+            })) : [];
+
+            return normalizedData.filter((a: Auditorio) => a.activo);
+        } catch (error) {
+            console.error('Error fetching auditorios:', error);
+            // Fallback or empty list? Let's return empty list to prevent crash
+            return [];
+        }
     },
 
     /**
@@ -22,23 +38,85 @@ export const auditorioService = {
      * Útil para paneles de administración.
      */
     getAllAuditorios: async (): Promise<Auditorio[]> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve([...MOCK_AUDITORIOS]);
-            }, SIMULATED_DELAY_MS);
-        });
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Failed to fetch');
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
     },
 
     /**
      * Busca un auditorio específico por su ID.
      * @param id Identificador único del auditorio
      */
-    getAuditorioById: async (id: string): Promise<Auditorio | undefined> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const found = MOCK_AUDITORIOS.find((a) => a.id === id);
-                resolve(found);
-            }, SIMULATED_DELAY_MS);
+    getAuditorioById: async (id: number): Promise<Auditorio | undefined> => {
+        try {
+            const response = await fetch(`${API_URL}/${id}`);
+            if (!response.ok) return undefined;
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return undefined;
+        }
+    },
+
+    create: async (auditorio: Partial<Auditorio>): Promise<Auditorio> => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(auditorio)
         });
+        if (response.status === 401) {
+            throw new Error('Tu sesión ha expirado. Por favor, cierra sesión y vuelve a ingresar.');
+        }
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error al crear auditorio');
+        }
+        return await response.json();
+    },
+
+    update: async (id: number, auditorio: Partial<Auditorio>): Promise<Auditorio> => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/${id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(auditorio)
+        });
+        if (response.status === 401) {
+            throw new Error('Tu sesión ha expirado. Por favor, cierra sesión y vuelve a ingresar.');
+        }
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error al actualizar auditorio');
+        }
+        return await response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/${id}/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response.status === 401) {
+            throw new Error('Tu sesión ha expirado. Por favor, cierra sesión y vuelve a ingresar.');
+        }
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Error al eliminar auditorio');
+        }
     }
 };

@@ -23,6 +23,30 @@ services:
       DB_NAME: agenda_db
       DB_USER: agenda_user
       DB_PASSWORD: agenda_pass
+      PYTHONUNBUFFERED: "1"
+      FLASK_APP: app
+      FLASK_DEBUG: "1"
+      # Mail Configuration
+      MAIL_SERVER: mailpit
+      MAIL_PORT: 1025
+      MAIL_USE_TLS: "false"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_DEFAULT_SENDER: "sistema@agenda.local"
+      ADMIN_NOTIFICATION_EMAIL: "leonardo.bastidas@cauca.gov.co"
+    command: [ "flask", "run", "--host=0.0.0.0" ]
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: agenda_mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
     restart: unless-stopped
 
 volumes:

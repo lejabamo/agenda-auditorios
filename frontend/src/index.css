@@ -1,21 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   /* Institutional Design Tokens - Gobierno */
-  --primary-color: #0f172a; /* Slate 900 - Professional/Dark */
+  --primary-color: #0f172a;
+  /* Slate 900 - Professional/Dark */
   --primary-light: #334155;
-  --accent-color: #2563eb; /* Royal Blue */
-  
-  --background-color: #f8fafc; /* Slate 50 */
+  --accent-color: #2563eb;
+  /* Royal Blue */
+
+  --background-color: #f8fafc;
+  /* Slate 50 */
   --surface-color: #ffffff;
-  
+
   --text-primary: #1e293b;
   --text-secondary: #64748b;
-  
+
   --border-color: #e2e8f0;
   --border-radius: 6px;
-  
+
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  
+
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -33,7 +40,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--primary-color);
   line-height: 1.2;
   margin-bottom: 1rem;
@@ -42,4 +54,21 @@ h1, h2, h3, h4, h5, h6 {
 button {
   cursor: pointer;
   font-family: inherit;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }

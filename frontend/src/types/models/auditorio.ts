@@ -1,5 +1,5 @@
 export interface Auditorio {
-    id: string;
+    id: number;
     nombre: string;
     ubicacion: string;
     capacidad: number;

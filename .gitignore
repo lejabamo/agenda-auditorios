@@ -1,16 +1,75 @@
-# Node
-node_modules/
+# ──────────────────────────────────────────────
+# Python / Backend
+# ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
 dist/
+build/
+.eggs/
+*.egg
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
 .env
 
-# Python
-__pycache__/
+# Byte-compiled cache
 *.pyc
-.venv
 
-# Docker
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
 *.log
 
-# OS
-.DS_Store
+# SQLite (if used locally)
+*.sqlite3
+*.db
+
+# Temporary / debug scripts (never commit these)
+backend/fix_entidades.py
+backend/debug_*.py
+backend/verify_*.py
+
+# ──────────────────────────────────────────────
+# Node / Frontend
+# ──────────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# ──────────────────────────────────────────────
+# Environment & Secrets (NEVER commit these)
+# ──────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ──────────────────────────────────────────────
+# IDE / OS
+# ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.DS_Store
 Thumbs.db
+desktop.ini
+
+# ──────────────────────────────────────────────
+# Docker
+# ──────────────────────────────────────────────
+.docker/
+
+# ──────────────────────────────────────────────
+# Logs
+# ──────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*

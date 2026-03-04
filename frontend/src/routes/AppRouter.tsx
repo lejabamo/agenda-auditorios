@@ -15,6 +15,8 @@ import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminCalendarioPage from '@/pages/admin/AdminCalendarioPage';
 import AdminSolicitudesPage from '@/pages/admin/AdminSolicitudesPage';
 import AdminEntidadesPage from '@/pages/admin/AdminEntidadesPage';
+import AdminAuditoriosPage from '@/pages/admin/AdminAuditoriosPage';
+import AdminSolicitudDetailPage from '@/pages/admin/AdminSolicitudDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
 
 export const router = createBrowserRouter([
@@ -72,12 +74,20 @@ export const router = createBrowserRouter([
                 element: <AdminSolicitudesPage />,
             },
             {
+                path: 'solicitudes/:id',
+                element: <AdminSolicitudDetailPage />,
+            },
+            {
                 path: 'entidades',
                 element: <AdminEntidadesPage />,
             },
             {
                 path: 'auditorios',
-                element: <div className="p-8">Configuración de Auditorios (Próximamente)</div>,
+                element: <AdminAuditoriosPage />,
+            },
+            {
+                path: 'solicitar',
+                element: <SolicitudWizardPage />,
             },
         ],
     },
