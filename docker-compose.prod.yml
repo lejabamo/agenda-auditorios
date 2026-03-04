@@ -1,0 +1,46 @@
+# docker-compose.prod.yml
+# ──────────────────────────────────────────────────────────────────────────────
+# Override de producción para el VPS.
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Este archivo REEMPLAZA los valores de dev (Mailpit) con los de producción.
+# Las credenciales reales se pasan vía variables de entorno del sistema o
+# un archivo .env en el servidor (nunca en este archivo).
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+  backend:
+    restart: always
+    environment:
+      # ── Seguridad ────────────────────────────────────────────────────────────
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+
+      # ── Base de Datos ─────────────────────────────────────────────────────────
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-agenda_db}
+      DB_USER: ${DB_USER:-agenda_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # ── Correo electrónico (SMTP real) ────────────────────────────────────────
+      # Para Gmail:       smtp.gmail.com  puerto 587  TLS: true
+      # Para Exchange365: smtp.office365.com  puerto 587  TLS: true
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USE_TLS: ${MAIL_USE_TLS:-true}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+      ADMIN_NOTIFICATION_EMAIL: ${ADMIN_NOTIFICATION_EMAIL}
+
+    # En producción se usa gunicorn en vez de flask run (más robusto)
+    command: [ "gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:create_app()" ]
+
+  # En producción NO se despliega Mailpit
+  mailpit:
+    profiles:
+      - dev # Solo activo con: docker compose --profile dev up
+
+  db:
+    restart: always

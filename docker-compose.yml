@@ -25,13 +25,10 @@ services:
       DB_PASSWORD: agenda_pass
       PYTHONUNBUFFERED: "1"
       FLASK_APP: app
-      FLASK_DEBUG: "1"
-      # Mail Configuration
+      # Mail Configuration (Mailpit for local dev — override via .env for production)
       MAIL_SERVER: mailpit
       MAIL_PORT: 1025
       MAIL_USE_TLS: "false"
-      MAIL_USERNAME: ""
-      MAIL_PASSWORD: ""
       MAIL_DEFAULT_SENDER: "sistema@agenda.local"
       ADMIN_NOTIFICATION_EMAIL: "leonardo.bastidas@cauca.gov.co"
     command: [ "flask", "run", "--host=0.0.0.0" ]
