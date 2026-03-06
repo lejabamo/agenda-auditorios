@@ -25,6 +25,8 @@ interface Step3Props {
 }
 
 const TIPO_EVENTO_OPTIONS = [
+    'Mesa Tecnica',
+    'Asistencia Tecnica',
     'Reunión',
     'Capacitación',
     'Acto Institucional',

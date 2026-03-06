@@ -206,6 +206,7 @@ class EventoService:
                 requiere_asistencia_tecnica=data.get("requiere_asistencia_tecnica", False),
                 auditorio_id=data["auditorio_id"],
                 dependencia_id=self._resolve_dependencia(data.get("dependencia_id")),
+                tipo_evento=data.get("tipo_evento"),
                 # Nuevos campos Fase 4
                 horario_detalle=data.get("horario_detalle"),
                 responsable_nombre=data["responsable_nombre"],
@@ -433,6 +434,7 @@ class EventoService:
             requiere_asistencia_tecnica=data.get("requiere_asistencia_tecnica", False),
             auditorio_id=data["auditorio_id"],
             dependencia_id=self._resolve_dependencia(data.get("dependencia_id")),
+            tipo_evento=data.get("tipo_evento"),
             horario_detalle=data.get("horario_detalle"),
             responsable_nombre=data["responsable_nombre"],
             responsable_telefono=telefono,

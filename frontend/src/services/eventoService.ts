@@ -1,6 +1,7 @@
 import type { WizardData } from './solicitudBookingService';
 
-const API_URL = 'http://localhost:5000/api'; // Adjust base URL as needed
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export class ApiError extends Error {
     public status: number;
@@ -286,6 +287,7 @@ export const eventoService = {
         responsable_telefono: string;
         correo_confirmacion: string;
         aforo_estimado?: number;
+        tipo_evento?: string;
         requiere_microfono?: boolean;
         requiere_videobeam?: boolean;
         requiere_sonido?: boolean;

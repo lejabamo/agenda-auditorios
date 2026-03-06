@@ -1,8 +1,10 @@
 import { Outlet, Link } from 'react-router-dom';
+import InstitutionalDisclaimerModal from '../components/common/InstitutionalDisclaimerModal';
 
 export default function PublicLayout() {
     return (
         <div className="min-h-screen flex flex-col bg-[var(--background-color)]">
+            <InstitutionalDisclaimerModal />
             {/* Header Institucional */}
             <header className="bg-[var(--surface-color)] border-b border-[var(--border-color)] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
                 <div className="flex items-center gap-4">

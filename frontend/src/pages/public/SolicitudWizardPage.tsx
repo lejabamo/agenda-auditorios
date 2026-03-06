@@ -166,6 +166,11 @@ export default function SolicitudWizardPage() {
                     message: 'Su solicitud fue registrada correctamente.',
                     id: id
                 });
+
+                // Limpiar disclaimer para futuras reservas
+                try {
+                    sessionStorage.removeItem('auditorio_disclaimer_accepted');
+                } catch (e) { }
             } else {
                 throw new Error('Respuesta inesperada del servidor');
             }

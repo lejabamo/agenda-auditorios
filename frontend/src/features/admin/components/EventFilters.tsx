@@ -15,7 +15,8 @@ export function EventFilters({ filters, onChange }: EventFiltersProps) {
     const { data: auditorios } = useQuery<Auditorio[]>({
         queryKey: ['auditorios'],
         queryFn: async () => {
-            const res = await fetch('http://localhost:5000/api/auditorios');
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/auditorios`);
+
             if (!res.ok) throw new Error("Failed to fetch auditorios");
             return res.json();
         }

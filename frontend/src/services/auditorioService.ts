@@ -1,6 +1,7 @@
 import type { Auditorio } from '@/types/models/auditorio';
 
-const API_URL = 'http://localhost:5000/api/auditorios';
+const API_URL = import.meta.env.VITE_API_URL + '/auditorios';
+
 
 export const auditorioService = {
     /**

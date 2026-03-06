@@ -13,6 +13,14 @@ export default function LandingPage() {
         }
     };
 
+    // Al llegar al inicio, nos aseguramos que para la próxima reserva
+    // se le vuelva a pedir que acepte el disclaimer.
+    try {
+        sessionStorage.removeItem('auditorio_disclaimer_accepted');
+    } catch (e) {
+        // ignore
+    }
+
     return (
         <div className="space-y-8 animate-fade-in">
             {/* Header / Intro */}

@@ -14,4 +14,9 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: true,   // exposes on 0.0.0.0 — accessible from phone/tablet on same network
+    port: 5173,
+  },
 })
+

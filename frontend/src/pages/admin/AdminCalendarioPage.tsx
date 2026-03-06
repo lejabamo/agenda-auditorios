@@ -79,6 +79,7 @@ export default function AdminCalendarioPage() {
         responsable_telefono: '',
         correo_confirmacion: '',
         aforo_estimado: '0',
+        tipo_evento: '',
         requiere_microfono: false,
         requiere_videobeam: false,
         requiere_sonido: false,
@@ -96,7 +97,8 @@ export default function AdminCalendarioPage() {
     const { data: dependencias = [] } = useQuery({
         queryKey: ['dependencias'],
         queryFn: async () => {
-            const res = await fetch('http://localhost:5000/api/dependencias/');
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/dependencias/`);
+
             return res.json();
         },
         staleTime: 1000 * 60 * 5
@@ -202,6 +204,7 @@ export default function AdminCalendarioPage() {
             responsable_telefono: form.responsable_telefono.trim(),
             correo_confirmacion: form.correo_confirmacion.trim(),
             aforo_estimado: Number(form.aforo_estimado) || 0,
+            tipo_evento: form.tipo_evento,
             requiere_microfono: form.requiere_microfono,
             requiere_videobeam: form.requiere_videobeam,
             requiere_sonido: form.requiere_sonido,
@@ -216,7 +219,7 @@ export default function AdminCalendarioPage() {
         setForm({
             titulo: '', descripcion: '', fecha: '', jornada: 'MAÑANA', auditorio_id: '',
             dependencia_id: '', responsable_nombre: '', responsable_telefono: '',
-            correo_confirmacion: '', aforo_estimado: '0', requiere_microfono: false,
+            correo_confirmacion: '', aforo_estimado: '0', tipo_evento: '', requiere_microfono: false,
             requiere_videobeam: false, requiere_sonido: false, requiere_asistencia_tecnica: false
         });
     };
@@ -361,6 +364,20 @@ export default function AdminCalendarioPage() {
                                         ⚠️ {formError}
                                     </div>
                                 )}
+
+                                {/* Row: Tipo Evento */}
+                                {field('Tipo de evento', 'tipo_evento', (
+                                    <select id="tipo_evento" required className={inputCls}
+                                        value={form.tipo_evento} onChange={e => setForm(f => ({ ...f, tipo_evento: e.target.value }))}>
+                                        <option value="">Seleccione...</option>
+                                        <option value="Mesa Tecnica">Mesa Tecnica</option>
+                                        <option value="Asistencia Tecnica">Asistencia Tecnica</option>
+                                        <option value="Reunión">Reunión</option>
+                                        <option value="Capacitación">Capacitación</option>
+                                        <option value="Acto Institucional">Acto Institucional</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                ), true)}
 
                                 {/* Row: Titulo */}
                                 {field('Título del evento', 'titulo', (
