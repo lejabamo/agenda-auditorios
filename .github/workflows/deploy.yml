@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /opt/agenda-auditorio
+            cd /opt/agenda
             
             # 1. Asegurar últimas versiones del código
             git fetch origin deploy/v1.1
