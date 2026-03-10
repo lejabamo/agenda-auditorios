@@ -29,8 +29,8 @@ jobs:
           # Esperar a que la base de datos inicie
           sleep 10
           docker exec agenda_backend alembic upgrade head
-          # Sembrar datos base para que los tests no fallen por llaves foráneas
-          docker exec agenda_backend python -c "from app.db import SessionLocal; from app.models.auditorio import Auditorio; from app.models.dependencia import Dependencia; s = SessionLocal(); s.add(Auditorio(nombre='Auditorio', capacidad=60)); s.add(Dependencia(nombre='Dependencia', tipo='ENTIDAD')); s.commit(); s.close()"
+          # Sembrar datos base para que los tests no fallen por llaves foráneas y los de UI encuentren las dependencias
+          docker exec agenda_backend python -c "from app.db import SessionLocal; from app.models.auditorio import Auditorio; from app.models.dependencia import Dependencia; s = SessionLocal(); s.add(Auditorio(nombre='Auditorio Filomena', capacidad=60)); s.add(Dependencia(nombre='Calidad Educativa', tipo='ENTIDAD')); s.add(Dependencia(nombre='Escalafón', tipo='OFICINA')); s.commit(); s.close()"
 
       - name: Install Test Dependencies
         run: docker exec agenda_backend pip install pytest
