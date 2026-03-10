@@ -303,7 +303,7 @@ def test_TC07_admin_crea_directo_pelea_de_gallos(db_session):
         "correo_confirmacion":  "lbastidas@cauca.gov.co",
         "aforo_estimado":       80,
         "requiere_microfono":   True,
-        "admin_id":             1,
+        "admin_id":             None,
     }
 
     email_calls = []
@@ -349,7 +349,7 @@ def test_TC08_admin_directo_sobre_slot_ocupado_falla(db_session):
         "responsable_nombre":   "Admin Test",
         "responsable_telefono": "3001234567",
         "correo_confirmacion":  "admin@cauca.gov.co",
-        "admin_id":             1,
+        "admin_id":             None,
     }
 
     svc = EventoService(db_session)
