@@ -78,5 +78,9 @@ jobs:
             # 3. Construir e iniciar la nueva versión
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
             
-            # 4. Limpieza automática para no llenar el disco del servidor
+            # 4. Aplicar Migraciones Automáticamente en el Servidor
+            sleep 5
+            docker exec agenda_backend alembic upgrade head
+            
+            # 5. Limpieza automática para no llenar el disco del servidor
             docker image prune -a -f
