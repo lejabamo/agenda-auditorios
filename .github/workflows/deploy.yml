@@ -1,30 +1,61 @@
-name: Deploy to VPS
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - deploy/v1.1
+  pull_request:
+    branches:
+      - deploy/v1.1
 
 jobs:
-  deploy:
+  test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-          
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
 
-      # Depending on the application structure, you can add build/test steps here
-      # However, for a simple SSH setup, we deploy directly.
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
 
+      - name: Run Backend Tests
+        working-directory: ./backend
+        run: pytest
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps
+        
+      - name: Run Frontend Tests
+        working-directory: ./frontend
+        run: npx playwright test
+
+  deploy:
+    name: Deploy to VPS
+    needs: test
+    runs-on: ubuntu-latest
+    # Solo despliega si es un "push" (no un pull request) directo a deploy/v1.1
+    if: github.ref == 'refs/heads/deploy/v1.1' && github.event_name == 'push'
+    steps:
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -33,10 +64,17 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /opt/agenda-auditorio
+            
+            # 1. Asegurar últimas versiones del código
             git fetch origin deploy/v1.1
             git checkout deploy/v1.1
             git pull origin deploy/v1.1
-            # Build and deploy
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml build
-            docker-compose -f docker-compose.prod.yml up -d
+            
+            # 2. Bajar los servicios antiguos a prueba de fallos
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml down || true
+            
+            # 3. Construir e iniciar la nueva versión
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+            
+            # 4. Limpieza automática para no llenar el disco del servidor
+            docker image prune -a -f
