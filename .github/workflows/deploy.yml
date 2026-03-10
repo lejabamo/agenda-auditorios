@@ -16,26 +16,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
 
-      - name: Install Backend Dependencies
-        working-directory: ./backend
+      - name: Start Backend and DB Services
+        run: docker compose -f docker-compose.yml up -d db backend mailpit
+
+      - name: Run Database Migrations
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest
+          # Esperar a que la base de datos inicie
+          sleep 10
+          docker exec agenda_backend alembic upgrade head
+
+      - name: Install Test Dependencies
+        run: docker exec agenda_backend pip install pytest
 
       - name: Run Backend Tests
-        working-directory: ./backend
-        run: pytest
+        run: docker exec agenda_backend pytest
 
       - name: Install Frontend Dependencies
         working-directory: ./frontend
@@ -47,6 +46,7 @@ jobs:
         
       - name: Run Frontend Tests
         working-directory: ./frontend
+        # Use localhost network to hit the dockerized backend
         run: npx playwright test
 
   deploy:
