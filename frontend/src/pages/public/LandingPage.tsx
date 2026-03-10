@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AuditoriumCalendar } from '@/features/calendar/AuditoriumCalendar';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function LandingPage() {
     const [radicado, setRadicado] = useState('');
@@ -12,14 +13,7 @@ export default function LandingPage() {
             navigate(`/seguimiento/${radicado}`);
         }
     };
-
-    // Al llegar al inicio, nos aseguramos que para la próxima reserva
-    // se le vuelva a pedir que acepte el disclaimer.
-    try {
-        sessionStorage.removeItem('auditorio_disclaimer_accepted');
-    } catch (e) {
-        // ignore
-    }
+    const isMobile = useIsMobile();
 
     return (
         <div className="space-y-8 animate-fade-in">
@@ -28,15 +22,39 @@ export default function LandingPage() {
                 <h1 className="text-3xl font-bold text-[var(--primary-color)]">
                     Agenda Auditorio Filomena
                 </h1>
-                <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
-                    Seleccione un bloque verde (Libre) en el calendario para iniciar su solicitud.
-                </p>
+                {!isMobile && (
+                    <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
+                        Seleccione un bloque verde (Libre) en el calendario para iniciar su solicitud.
+                    </p>
+                )}
             </div>
 
-            {/* Main Content: Calendar */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                <AuditoriumCalendar className="h-[700px]" />
-            </div>
+            {/* Main Content: Calendar / Mobile Button */}
+            {isMobile ? (
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden p-8 flex flex-col items-center justify-center text-center space-y-6">
+                    <div className="p-4 bg-blue-50 text-[var(--primary-color)] rounded-full mb-2">
+                        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-800">Solicitar Reserva</h2>
+                        <p className="text-sm text-gray-500 mt-2">
+                            Complete el formulario paso a paso para agendar su espacio.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => navigate('/solicitar')}
+                        className="w-full bg-[var(--primary-color)] text-white text-lg font-bold py-4 px-6 rounded-xl hover:bg-[var(--primary-light)] transition-all shadow-md active:scale-[0.98]"
+                    >
+                        Solicitar uso del auditorio
+                    </button>
+                </div>
+            ) : (
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                    <AuditoriumCalendar className="h-[700px]" />
+                </div>
+            )}
 
             {/* Secondary: Collapsible Search */}
             <div className="max-w-xl mx-auto pt-8">

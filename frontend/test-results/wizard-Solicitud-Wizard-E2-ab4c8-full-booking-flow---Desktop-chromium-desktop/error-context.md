@@ -1,0 +1,233 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - dialog "Condiciones de Uso – Auditorio Filomena Segura" [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - img "Escudo Gobernación del Cauca" [ref=e8]
+          - img "Secretaría de Educación y Cultura" [ref=e9]
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: Secretaría de Educación y Cultura del Cauca
+          - heading "Condiciones de Uso – Auditorio Filomena Segura" [level=2] [ref=e12]
+      - generic [ref=e14]:
+        - paragraph [ref=e15]: "Antes de realizar una solicitud para el uso del auditorio, por favor revise y acepte las siguientes condiciones institucionales:"
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e18]:
+              - img [ref=e19]
+              - heading "Capacidad del Auditorio" [level=3] [ref=e21]
+            - paragraph [ref=e22]:
+              - text: Capacidad máxima permitida de
+              - strong [ref=e23]: 50 a 60 personas
+              - text: .
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - img [ref=e26]
+              - heading "Normas del Espacio" [level=3] [ref=e28]
+            - paragraph [ref=e29]:
+              - strong [ref=e30]: No se permite
+              - text: el consumo de alimentos, bebidas, licores, cigarrillos u otras sustancias. Es un espacio cerrado.
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - img [ref=e33]
+              - heading "Proceso de Solicitud" [level=3] [ref=e35]
+            - paragraph [ref=e36]: Debe diligenciar el formulario en línea del sistema únicamente después de aceptar estas condiciones.
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - img [ref=e39]
+              - heading "Tiempo de Solicitud" [level=3] [ref=e41]
+            - paragraph [ref=e42]:
+              - text: Realizar la solicitud con anticipación, como mínimo hasta el
+              - strong [ref=e43]: viernes anterior a la actividad (12:30 PM)
+              - text: .
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - img [ref=e46]
+              - heading "Criterios de Asignación y Prioridad" [level=3] [ref=e48]
+            - generic [ref=e49]:
+              - paragraph [ref=e50]: "La autorización puede modificarse si se requiere para atender situaciones urgentes. Se priorizan:"
+              - list [ref=e51]:
+                - listitem [ref=e52]: Agendas institucionales Gobernación del Cauca
+                - listitem [ref=e53]: Actividades de la Secretaría de Educación
+                - listitem [ref=e54]: Situaciones de alta urgencia
+        - separator [ref=e55]
+        - generic [ref=e56]:
+          - img [ref=e58]
+          - generic [ref=e60]:
+            - heading "Contacto para novedades" [level=4] [ref=e61]
+            - link "gestionadministrativa.educacion@cauca.gov.co" [ref=e62] [cursor=pointer]:
+              - /url: mailto:gestionadministrativa.educacion@cauca.gov.co
+            - paragraph [ref=e63]:
+              - strong [ref=e64]: Dayra Milena Achicanoy Achicanoy
+              - text: Profesional Universitario - Administrativa y Financiera
+      - generic [ref=e65]:
+        - generic [ref=e66] [cursor=pointer]:
+          - checkbox "Aceptar condiciones de uso" [active] [ref=e68]
+          - generic [ref=e69]: He leído y acepto las condiciones de uso del Auditorio Filomena Segura para continuar.
+        - button "Aceptar y continuar" [disabled] [ref=e70]
+  - banner [ref=e71]:
+    - generic [ref=e72]:
+      - img "Escudo Gobernación del Cauca" [ref=e73]
+      - generic [ref=e74]:
+        - img "Secretaría" [ref=e75]
+        - generic [ref=e76]: Sistema de Gestión de Espacios
+    - navigation [ref=e77]:
+      - link "Inicio" [ref=e78] [cursor=pointer]:
+        - /url: /
+  - main [ref=e79]:
+    - generic [ref=e80]:
+      - generic [ref=e81]:
+        - heading "Agenda Auditorio Filomena" [level=1] [ref=e82]
+        - paragraph [ref=e83]: Seleccione un bloque verde (Libre) en el calendario para iniciar su solicitud.
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - heading "Agenda Auditorio Filomena" [level=1] [ref=e87]
+          - generic [ref=e88]:
+            - generic [ref=e89]: Libre
+            - generic [ref=e91]: Solicitado/En Proceso
+            - generic [ref=e93]: Ocupado
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - button "Hoy" [ref=e99] [cursor=pointer]
+              - button "Anterior" [ref=e100] [cursor=pointer]
+              - button "Siguiente" [ref=e101] [cursor=pointer]
+            - generic [ref=e102]: marzo 09 – 15
+            - generic [ref=e103]:
+              - button "Mes" [ref=e104] [cursor=pointer]
+              - button "Semana" [ref=e105] [cursor=pointer]
+              - button "Día" [ref=e106] [cursor=pointer]
+          - generic [ref=e107]:
+            - generic [ref=e111]:
+              - button "09 lun" [ref=e113] [cursor=pointer]:
+                - columnheader "09 lun" [ref=e114]
+              - button "10 mar" [ref=e116] [cursor=pointer]:
+                - columnheader "10 mar" [ref=e117]
+              - button "11 mié" [ref=e119] [cursor=pointer]:
+                - columnheader "11 mié" [ref=e120]
+              - button "12 jue" [ref=e122] [cursor=pointer]:
+                - columnheader "12 jue" [ref=e123]
+              - button "13 vie" [ref=e125] [cursor=pointer]:
+                - columnheader "13 vie" [ref=e126]
+              - button "14 sáb" [ref=e128] [cursor=pointer]:
+                - columnheader "14 sáb" [ref=e129]
+              - button "15 dom" [ref=e131] [cursor=pointer]:
+                - columnheader "15 dom" [ref=e132]
+            - generic [ref=e133]:
+              - generic [ref=e134]:
+                - generic [ref=e136]: 08:00
+                - generic [ref=e139]: 10:00
+                - generic [ref=e142]: 12:00
+                - generic [ref=e145]: 14:00
+                - generic [ref=e148]: 16:00
+              - button "08:00 – 18:00 Dame tu fuerza pegaso, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e167]:
+                - generic [ref=e168]: 08:00 – 18:00
+                - button "Dame tu fuerza pegaso, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e170] [cursor=pointer]:
+                  - generic [ref=e171]: Dame tu fuerza pegaso
+                  - generic [ref=e172]: 8:00 AM - 6:00 PM
+                  - generic [ref=e173]: (Ocupado)
+              - generic [ref=e174] [cursor=pointer]:
+                - generic "Espacio disponible a las 3:00 PM. Click para solicitar." [ref=e186]
+                - generic [ref=e187]:
+                  - generic "Espacio disponible a las 4:00 PM. Click para solicitar." [ref=e188]
+                  - generic "Espacio disponible a las 5:00 PM. Click para solicitar." [ref=e189]
+                - generic [ref=e190]:
+                  - button "08:00 – 12:00 pelea de gallos, estado APROBADO. De 8:00 AM a 12:00 PM" [ref=e191]:
+                    - generic [ref=e192]: 08:00 – 12:00
+                    - button "pelea de gallos, estado APROBADO. De 8:00 AM a 12:00 PM" [ref=e194]:
+                      - generic [ref=e195]: pelea de gallos
+                      - generic [ref=e197]: 8:00 AM - 12:00 PM
+                      - generic [ref=e198]: (Ocupado)
+                  - button "12:00 – 13:00 Reserva Temporal, estado BLOQUEO_TEMPORAL. De 12:00 PM a 1:00 PM" [ref=e199]:
+                    - generic [ref=e200]: 12:00 – 13:00
+                    - button "Reserva Temporal, estado BLOQUEO_TEMPORAL. De 12:00 PM a 1:00 PM" [ref=e202]:
+                      - generic [ref=e203]: Reserva Temporal
+                      - generic [ref=e205]: 12:00 PM - 1:00 PM
+                      - generic [ref=e206]: (Solicitado)
+                  - button "14:00 – 16:00 Reserva Temporal, estado BLOQUEO_TEMPORAL. De 2:00 PM a 4:00 PM" [ref=e207]:
+                    - generic [ref=e208]: 14:00 – 16:00
+                    - button "Reserva Temporal, estado BLOQUEO_TEMPORAL. De 2:00 PM a 4:00 PM" [ref=e210]:
+                      - generic [ref=e211]: Reserva Temporal
+                      - generic [ref=e213]: 2:00 PM - 4:00 PM
+                      - generic [ref=e214]: (Solicitado)
+                  - button "16:00 – 17:00 Reserva Temporal, estado BLOQUEO_TEMPORAL. De 4:00 PM a 5:00 PM" [ref=e215]:
+                    - generic [ref=e216]: 16:00 – 17:00
+                    - button "Reserva Temporal, estado BLOQUEO_TEMPORAL. De 4:00 PM a 5:00 PM" [ref=e218]:
+                      - generic [ref=e219]: Reserva Temporal
+                      - generic [ref=e221]: 4:00 PM - 5:00 PM
+                      - generic [ref=e222]: (Solicitado)
+              - generic [ref=e223] [cursor=pointer]:
+                - generic [ref=e224]:
+                  - generic "Espacio disponible a las 8:00 AM. Click para solicitar." [ref=e225]
+                  - generic "Espacio disponible a las 9:00 AM. Click para solicitar." [ref=e226]
+                - generic [ref=e227]:
+                  - generic "Espacio disponible a las 10:00 AM. Click para solicitar." [ref=e228]
+                  - generic "Espacio disponible a las 11:00 AM. Click para solicitar." [ref=e229]
+                - generic [ref=e233]:
+                  - generic "Espacio disponible a las 2:00 PM. Click para solicitar." [ref=e234]
+                  - generic "Espacio disponible a las 3:00 PM. Click para solicitar." [ref=e235]
+                - generic [ref=e236]:
+                  - generic "Espacio disponible a las 4:00 PM. Click para solicitar." [ref=e237]
+                  - generic "Espacio disponible a las 5:00 PM. Click para solicitar." [ref=e238]
+                - generic [ref=e239]:
+                  - button "08:00 – 18:00 Reserva Temporal, estado BLOQUEO_TEMPORAL. De 8:00 AM a 6:00 PM" [ref=e240]:
+                    - generic [ref=e241]: 08:00 – 18:00
+                    - button "Reserva Temporal, estado BLOQUEO_TEMPORAL. De 8:00 AM a 6:00 PM" [ref=e243]:
+                      - generic [ref=e244]: Reserva Temporal
+                      - generic [ref=e246]: 8:00 AM - 6:00 PM
+                      - generic [ref=e247]: (Solicitado)
+                  - button "08:00 – 12:00 Reserva Temporal, estado APROBADO. De 8:00 AM a 12:00 PM" [ref=e248]:
+                    - generic [ref=e249]: 08:00 – 12:00
+                    - button "Reserva Temporal, estado APROBADO. De 8:00 AM a 12:00 PM" [ref=e251]:
+                      - generic [ref=e252]: Reserva Temporal
+                      - generic [ref=e253]: 8:00 AM - 12:00 PM
+                      - generic [ref=e254]: (Ocupado)
+              - generic [ref=e255] [cursor=pointer]:
+                - generic [ref=e256]:
+                  - generic "Espacio disponible a las 8:00 AM. Click para solicitar." [ref=e257]
+                  - generic "Espacio disponible a las 9:00 AM. Click para solicitar." [ref=e258]
+                - generic [ref=e259]:
+                  - generic "Espacio disponible a las 10:00 AM. Click para solicitar." [ref=e260]
+                  - generic "Espacio disponible a las 11:00 AM. Click para solicitar." [ref=e261]
+                - generic [ref=e265]:
+                  - generic "Espacio disponible a las 2:00 PM. Click para solicitar." [ref=e266]
+                  - generic "Espacio disponible a las 3:00 PM. Click para solicitar." [ref=e267]
+                - generic [ref=e268]:
+                  - generic "Espacio disponible a las 4:00 PM. Click para solicitar." [ref=e269]
+                  - generic "Espacio disponible a las 5:00 PM. Click para solicitar." [ref=e270]
+                - button "08:00 – 18:00 Hola, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e272]:
+                  - generic [ref=e273]: 08:00 – 18:00
+                  - button "Hola, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e275]:
+                    - generic [ref=e276]: Hola
+                    - generic [ref=e278]: 8:00 AM - 6:00 PM
+                    - generic [ref=e279]: (Ocupado)
+              - generic [ref=e280] [cursor=pointer]:
+                - generic [ref=e281]:
+                  - generic "Espacio disponible a las 8:00 AM. Click para solicitar." [ref=e282]
+                  - generic "Espacio disponible a las 9:00 AM. Click para solicitar." [ref=e283]
+                - generic [ref=e284]:
+                  - generic "Espacio disponible a las 10:00 AM. Click para solicitar." [ref=e285]
+                  - generic "Espacio disponible a las 11:00 AM. Click para solicitar." [ref=e286]
+                - generic [ref=e290]:
+                  - generic "Espacio disponible a las 2:00 PM. Click para solicitar." [ref=e291]
+                  - generic "Espacio disponible a las 3:00 PM. Click para solicitar." [ref=e292]
+                - generic [ref=e293]:
+                  - generic "Espacio disponible a las 4:00 PM. Click para solicitar." [ref=e294]
+                  - generic "Espacio disponible a las 5:00 PM. Click para solicitar." [ref=e295]
+                - button "08:00 – 18:00 Batman el Caballero de la noche, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e297]:
+                  - generic [ref=e298]: 08:00 – 18:00
+                  - button "Batman el Caballero de la noche, estado APROBADO. De 8:00 AM a 6:00 PM" [ref=e300]:
+                    - generic [ref=e301]: Batman el Caballero de la noche
+                    - generic [ref=e302]: 8:00 AM - 6:00 PM
+                    - generic [ref=e303]: (Ocupado)
+      - group [ref=e339]:
+        - generic "Consultar estado de solicitud por Radicado" [ref=e340] [cursor=pointer]:
+          - generic [ref=e341]:
+            - img [ref=e342]
+            - text: Consultar estado de solicitud por Radicado
+          - img [ref=e345]
+  - contentinfo [ref=e347]:
+    - paragraph [ref=e349]: © 2026 Gobernación del Cauca. Todos los derechos reservados.
+```

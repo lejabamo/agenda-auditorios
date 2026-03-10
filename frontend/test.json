@@ -1,0 +1,566 @@
+﻿{
+  "config": {
+    "configFile": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/jefes/OneDrive/Desktop/agenda-auditorio/frontend/tests/e2e",
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/jefes/OneDrive/Desktop/agenda-auditorio/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium-desktop",
+        "name": "chromium-desktop",
+        "testDir": "C:/Users/jefes/OneDrive/Desktop/agenda-auditorio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Users/jefes/OneDrive/Desktop/agenda-auditorio/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/jefes/OneDrive/Desktop/agenda-auditorio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "wizard.test.ts",
+      "file": "wizard.test.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Solicitud Wizard E2E",
+          "file": "wizard.test.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should complete the full booking flow - Desktop",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3580,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-10T18:58:21.258Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2573,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-10T18:58:26.091Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\test-results\\wizard-Solicitud-Wizard-E2-ab4c8-full-booking-flow---Desktop-chromium-desktop-retry1\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    },
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3539,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-03-10T18:58:29.945Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1ad9a3fd67c45124d306-779ce64f48f5ced0d6a1",
+              "file": "wizard.test.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "should have mobile optimized layout - Mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Solo para vista m├│vil",
+                      "location": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "line": 68,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium-desktop",
+                  "projectName": "chromium-desktop",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 73,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-10T18:58:34.739Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Solo para vista m├│vil",
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "line": 68,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1ad9a3fd67c45124d306-6776b1a82ff0fe623566",
+              "file": "wizard.test.ts",
+              "line": 67,
+              "column": 3
+            },
+            {
+              "title": "should complete the full booking flow - Desktop",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3552,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-10T18:58:36.068Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    },
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2576,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-10T18:58:40.857Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\test-results\\wizard-Solicitud-Wizard-E2-ab4c8-full-booking-flow---Desktop-mobile-chrome-retry1\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    },
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3542,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 7
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  5 |\u001b[39m   test(\u001b[32m'should complete the full booking flow - Desktop'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m  6 |\u001b[39m     \u001b[90m// 1. Go to landing\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m     \u001b[90m// 1.5 Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 10 |\u001b[39m     \u001b[36mtry\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 7
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {\n   6 |     // 1. Go to landing\n>  7 |     await page.goto('/');\n     |                ^\n   8 |\n   9 |     // 1.5 Handle Disclaimer Modal if present\n  10 |     try {\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:7:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-03-10T18:58:44.689Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 7
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1ad9a3fd67c45124d306-eb07a2b183353813d513",
+              "file": "wizard.test.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "should have mobile optimized layout - Mobile",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3533,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 70
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 68 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39misMobile\u001b[33m,\u001b[39m \u001b[32m'Solo para vista m├│vil'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m modal \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.idm-backdrop'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 70
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n  68 |     test.skip(!isMobile, 'Solo para vista m├│vil');\n  69 |     \n> 70 |     await page.goto('/');\n     |                ^\n  71 |\n  72 |     // Handle Disclaimer Modal if present\n  73 |     const modal = page.locator('.idm-backdrop');\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-10T18:58:49.434Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 70
+                      }
+                    },
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2579,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 70
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 68 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39misMobile\u001b[33m,\u001b[39m \u001b[32m'Solo para vista m├│vil'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m modal \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.idm-backdrop'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 70
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n  68 |     test.skip(!isMobile, 'Solo para vista m├│vil');\n  69 |     \n> 70 |     await page.goto('/');\n     |                ^\n  71 |\n  72 |     // Handle Disclaimer Modal if present\n  73 |     const modal = page.locator('.idm-backdrop');\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-03-10T18:58:54.199Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\test-results\\wizard-Solicitud-Wizard-E2-286ce-e-optimized-layout---Mobile-mobile-chrome-retry1\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 70
+                      }
+                    },
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3545,
+                      "error": {
+                        "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16",
+                        "location": {
+                          "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                          "column": 16,
+                          "line": 70
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 68 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39misMobile\u001b[33m,\u001b[39m \u001b[32m'Solo para vista m├│vil'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Handle Disclaimer Modal if present\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m modal \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.idm-backdrop'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                            "column": 16,
+                            "line": 70
+                          },
+                          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n  68 |     test.skip(!isMobile, 'Solo para vista m├│vil');\n  69 |     \n> 70 |     await page.goto('/');\n     |                ^\n  71 |\n  72 |     // Handle Disclaimer Modal if present\n  73 |     const modal = page.locator('.idm-backdrop');\n    at C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts:70:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-03-10T18:58:58.077Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\Users\\jefes\\OneDrive\\Desktop\\agenda-auditorio\\frontend\\tests\\e2e\\wizard.test.ts",
+                        "column": 16,
+                        "line": 70
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1ad9a3fd67c45124d306-41b8bdf4305d55f19573",
+              "file": "wizard.test.ts",
+              "line": 67,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-10T18:58:20.102Z",
+    "duration": 41692.823,
+    "expected": 0,
+    "skipped": 1,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

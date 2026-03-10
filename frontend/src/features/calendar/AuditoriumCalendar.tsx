@@ -246,24 +246,19 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
             return;
         }
 
-        // Use the exact clicked slot for availability, assuming a default duration of 2 hours, or up to the end of the Jornada
+        // Use the exact clicked or dragged range
         let bookingStart = slotInfo.start;
-        let bookingEnd = new Date(slotInfo.start);
-
-        // Let's assume a default booking duration of 2 hours, but capped at the end of the jornada.
-        if (jornada === 'MAÑANA') {
-            bookingEnd.setHours(Math.min(hour + 2, 12));
-        } else if (jornada === 'TARDE') {
-            bookingEnd.setHours(Math.min(hour + 2, 18));
-        } else {
-            bookingEnd.setHours(hour + 2);
-        }
-
+        let bookingEnd = slotInfo.end;
+        
+        // If it was a single click (usually 1 hour duration with step=60), we could keep it or adjust,
+        // but now that the wizard is editable, we just take the selection.
+        
         const isExactSlotFree = isRangeFree(bookingStart, bookingEnd);
-
-        if (!isExactSlotFree) {
-            alert(`ℹ️ El horario específico de ${format(bookingStart, 'h:mm a')} a ${format(bookingEnd, 'h:mm a')} ya está ocupado. Intente seleccionar otro bloque libre.`);
-            return;
+ 
+        if (!isExactSlotFree && slotInfo.action === 'select') {
+             // If they selected a range that overlaps, we tell them.
+             alert(`ℹ️ Parte del horario seleccionado (${format(bookingStart, 'h:mm a')} a ${format(bookingEnd, 'h:mm a')}) ya está ocupado.`);
+             return;
         }
 
         // Open Confirmation Modal instead of immediate action
@@ -287,7 +282,9 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
             const holdResponse = await eventoService.createHold({
                 fecha: fechaStr,
                 jornada: selectedJornadaOption, // Use the selected option from modal
-                auditorio_id: 1 // Filomena
+                auditorio_id: 1, // Filomena
+                hora_inicio: format(selectedSlot.start, 'HH:mm'),
+                hora_fin: format(selectedSlot.end, 'HH:mm')
             });
 
             if (!holdResponse || !holdResponse.id) {

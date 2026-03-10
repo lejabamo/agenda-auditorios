@@ -31,6 +31,8 @@ interface WizardData {
     responsable_cargo: string;
     responsable_telefono: string;
     correo_confirmacion: string;
+    horaInicio: string;
+    horaFin: string;
 }
 
 interface Step4Props {
@@ -50,7 +52,7 @@ export function Step4Responsable({ data, onConfirm, onBack, onDataChange, submis
     const {
         register,
         handleSubmit,
-        formState: { errors, isValid, touchedFields },
+        formState: { errors, touchedFields },
         watch
     } = useForm<ResponsableFormValues>({
         resolver: zodResolver(responsableSchema),
@@ -99,8 +101,10 @@ export function Step4Responsable({ data, onConfirm, onBack, onDataChange, submis
                             <p className="font-medium text-gray-900">{data.entity?.officialName}</p>
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 uppercase">Fecha y Hora</p>
-                            <p className="font-medium text-gray-900">{data.fecha} | {data.jornada?.replace('_', ' ')}</p>
+                            <p className="text-xs text-gray-500 uppercase">Fecha y Horario</p>
+                            <p className="font-medium text-gray-900">
+                                {data.fecha} | {data.jornada?.replace('_', ' ')} ({data.horaInicio} - {data.horaFin})
+                            </p>
                         </div>
                         <div>
                             <p className="text-xs text-gray-500 uppercase">Estado</p>
@@ -108,10 +112,10 @@ export function Step4Responsable({ data, onConfirm, onBack, onDataChange, submis
                                 Pendiente de aprobación
                             </span>
                         </div>
-                        <div className="pt-2 border-t border-gray-100 mt-2">
-                            <p className="text-xs text-gray-500 uppercase">Código de Radicado</p>
-                            <p className="text-xl font-mono font-bold text-green-700 tracking-wider">
-                                {submissionResult.id || 'PENDIENTE'}
+                        <div className="pt-4 border-t border-gray-200 mt-4 text-center">
+                            <p className="text-sm text-gray-500 uppercase font-bold mb-2 tracking-wide">Código de Radicado</p>
+                            <p className="text-4xl font-mono font-black text-[var(--primary-color)] tracking-widest bg-blue-50 py-3 rounded-lg border-2 border-[var(--primary-color)] border-dashed inline-block px-10">
+                                #{submissionResult.id || 'PENDIENTE'}
                             </p>
                         </div>
                     </div>
@@ -293,9 +297,9 @@ export function Step4Responsable({ data, onConfirm, onBack, onDataChange, submis
                                 <dd className="font-medium text-gray-900">{data.auditorio?.nombre}</dd>
                             </div>
                             <div>
-                                <dt className="text-gray-500 text-xs uppercase">Fecha y Hora</dt>
+                                <dt className="text-gray-500 text-xs uppercase">Fecha y Horario</dt>
                                 <dd className="font-medium text-gray-900">
-                                    {data.fecha} <span className="text-gray-400">|</span> {data.jornada?.replace('_', ' ')}
+                                    {data.fecha} <span className="text-gray-400">|</span> {data.jornada?.replace('_', ' ')} ({data.horaInicio} - {data.horaFin})
                                 </dd>
                             </div>
                             <div>
@@ -326,9 +330,9 @@ export function Step4Responsable({ data, onConfirm, onBack, onDataChange, submis
                     // Linking via form attribute is cleanest
                     form="responsable-form"
                     type="submit"
-                    disabled={isSubmitting || !isValid}
+                    disabled={isSubmitting}
                     className={`px-6 py-2 rounded-md text-sm font-medium text-white transition-all shadow-sm flex items-center gap-2
-                        ${(isSubmitting || !isValid)
+                        ${isSubmitting
                             ? 'bg-gray-300 cursor-not-allowed'
                             : 'bg-green-600 hover:bg-green-700 hover:shadow-md transform hover:-translate-y-0.5'
                         }`}

@@ -1,0 +1,65 @@
+﻿
+Running 4 tests using 4 workers
+
+[1A[2K[1/4] [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop
+[1A[2K[2/4] [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:67:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should have mobile optimized layout - Mobile
+[1A[2K[3/4] [chromium-desktop] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop
+[1A[2K[4/4] [chromium-desktop] ΓÇ║ tests\e2e\wizard.test.ts:67:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should have mobile optimized layout - Mobile
+[1A[2K  1) [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:67:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should have mobile optimized layout - Mobile 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+      68 |     test.skip(!isMobile, 'Solo para vista m├│vil');
+      69 |     
+    > 70 |     await page.goto('/');
+         |                ^
+      71 |
+      72 |     // Handle Disclaimer Modal if present
+      73 |     const modal = page.locator('.idm-backdrop');
+        at C:\Users\jefes\OneDrive\Desktop\agenda-auditorio\frontend\tests\e2e\wizard.test.ts:70:16
+
+
+[1A[2K  2) [chromium-desktop] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+       5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {
+       6 |     // 1. Go to landing
+    >  7 |     await page.goto('/');
+         |                ^
+       8 |
+       9 |     // 1.5 Handle Disclaimer Modal if present
+      10 |     try {
+        at C:\Users\jefes\OneDrive\Desktop\agenda-auditorio\frontend\tests\e2e\wizard.test.ts:7:16
+
+
+[1A[2K  3) [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/
+    Call log:
+    [2m  - navigating to "http://localhost:5173/", waiting until "load"[22m
+
+
+       5 |   test('should complete the full booking flow - Desktop', async ({ page }) => {
+       6 |     // 1. Go to landing
+    >  7 |     await page.goto('/');
+         |                ^
+       8 |
+       9 |     // 1.5 Handle Disclaimer Modal if present
+      10 |     try {
+        at C:\Users\jefes\OneDrive\Desktop\agenda-auditorio\frontend\tests\e2e\wizard.test.ts:7:16
+
+
+[1A[2K  3 failed
+    [chromium-desktop] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop 
+    [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:5:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should complete the full booking flow - Desktop 
+    [mobile-chrome] ΓÇ║ tests\e2e\wizard.test.ts:67:3 ΓÇ║ Solicitud Wizard E2E ΓÇ║ should have mobile optimized layout - Mobile 
+  1 skipped
+
+[36m  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.[39m

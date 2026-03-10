@@ -27,7 +27,9 @@ class Evento(Base):
     # Campos de contacto y solicitud (Fase 4)
     fecha_solicitud: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     horario_detalle: Mapped[str | None] = mapped_column(String(255))
+    tipo_evento: Mapped[str | None] = mapped_column(String(100))
     responsable_nombre: Mapped[str | None] = mapped_column(String(150), nullable=True)
+    responsable_cargo: Mapped[str | None] = mapped_column(String(150), nullable=True)
     responsable_telefono: Mapped[str | None] = mapped_column(String(50), nullable=True)
     correo_confirmacion: Mapped[str | None] = mapped_column(String(150), nullable=True)
 

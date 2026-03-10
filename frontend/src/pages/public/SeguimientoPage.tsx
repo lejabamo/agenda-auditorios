@@ -86,9 +86,12 @@ export default function SeguimientoPage() {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Estado de Solicitud</h1>
-                            <p className="text-sm text-gray-500 mt-1">
-                                Radicado: <span className="font-mono font-medium text-gray-700">#{evento.id}</span>
-                            </p>
+                            <div className="flex items-center gap-3 mt-3">
+                                <span className="text-sm font-bold text-gray-500 uppercase tracking-wide">Radicado:</span>
+                                <span className="text-3xl font-mono font-black text-[var(--primary-color)] bg-blue-50 px-4 py-1.5 rounded-lg border-2 border-[var(--primary-color)] border-dashed">
+                                    #{evento.id}
+                                </span>
+                            </div>
                         </div>
                         <div>
                             <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold tracking-wide uppercase

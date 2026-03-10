@@ -152,7 +152,7 @@ export const eventoService = {
         }
     },
 
-    createHold: async (data: { fecha: string; jornada: string; auditorio_id: number }) => {
+    createHold: async (data: { fecha: string; jornada: string; auditorio_id: number; hora_inicio?: string; hora_fin?: string }) => {
         try {
             // Validate payload before sending
             if (!data.fecha || !data.jornada || !data.auditorio_id) {

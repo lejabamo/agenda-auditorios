@@ -480,6 +480,8 @@ class EventoService:
         fecha_str = data.get("fecha")
         jornada = data.get("jornada")
         auditorio_id = data.get("auditorio_id")
+        hora_inicio_str = data.get("hora_inicio")
+        hora_fin_str = data.get("hora_fin")
 
         try:
             if not all([fecha_str, jornada, auditorio_id]):
@@ -488,13 +490,22 @@ class EventoService:
             fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
 
             start_hour, end_hour = 8, 18
-            if jornada == 'MAÑANA':
-                start_hour, end_hour = 8, 12
-            elif jornada == 'TARDE':
-                start_hour, end_hour = 14, 18
+            start_minute, end_minute = 0, 0
 
-            fecha_inicio = fecha.replace(hour=start_hour, minute=0, second=0)
-            fecha_fin = fecha.replace(hour=end_hour, minute=0, second=0)
+            # Prioritize exact times if provided (e.g. from the custom calendar interaction)
+            if hora_inicio_str and hora_fin_str:
+                sh, sm = map(int, hora_inicio_str.split(':'))
+                eh, em = map(int, hora_fin_str.split(':'))
+                start_hour, start_minute = sh, sm
+                end_hour, end_minute = eh, em
+            else:
+                if jornada == 'MAÑANA':
+                    start_hour, end_hour = 8, 12
+                elif jornada == 'TARDE':
+                    start_hour, end_hour = 14, 18
+
+            fecha_inicio = fecha.replace(hour=start_hour, minute=start_minute, second=0)
+            fecha_fin = fecha.replace(hour=end_hour, minute=end_minute, second=0)
 
             stmt = select(Evento).where(
                 Evento.auditorio_id == auditorio_id,

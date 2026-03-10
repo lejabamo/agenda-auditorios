@@ -19,8 +19,6 @@ interface Step3Props {
         aforo_estimado: number | '';
         requerimientos_tecnicos: string[];
         tipo_evento: string;
-        horaInicio: string;
-        horaFin: string;
     }>) => void;
 }
 
@@ -33,12 +31,6 @@ const TIPO_EVENTO_OPTIONS = [
     'Otro'
 ];
 
-const REQUERIMIENTOS_OPTIONS = [
-    'Microfono',
-    'Videobeam',
-    'Sonido',
-    'Asistencia técnica'
-];
 
 export function Step3DetallesEvento({ data, auditorio, onDataChange }: Step3Props) {
     const handleTituloChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,42 +51,10 @@ export function Step3DetallesEvento({ data, auditorio, onDataChange }: Step3Prop
         onDataChange({ aforo_estimado: num });
     };
 
-    const handleRequerimientoToggle = (req: string) => {
-        const current = data.requerimientos_tecnicos || [];
-        if (current.includes(req)) {
-            onDataChange({ requerimientos_tecnicos: current.filter(r => r !== req) });
-        } else {
-            onDataChange({ requerimientos_tecnicos: [...current, req] });
-        }
+    const handleRequerimientosRadioChange = (value: string) => {
+        onDataChange({ requerimientos_tecnicos: [value] });
     };
 
-    const handleTimeChange = (field: 'horaInicio' | 'horaFin', value: string) => {
-        onDataChange({ [field]: value });
-    };
-
-    // Helper to generate time options based on Jornada
-    const getTimeOptions = () => {
-        const options: string[] = [];
-        let start = 8;
-        let end = 18;
-
-        if (data.jornada === 'MAÑANA') {
-            start = 8;
-            end = 12; // Inclusive of end time for "Fin"? No, end time can be 12:00
-        } else if (data.jornada === 'TARDE') {
-            start = 14;
-            end = 18;
-        }
-
-        // Generate hourly slots
-        for (let i = start; i <= end; i++) {
-            options.push(`${i.toString().padStart(2, '0')}:00`);
-            // Optional: Add half hours? User asked for "13, 14, 15". Let's stick to hours for simplicity first.
-        }
-        return options;
-    };
-
-    const timeOptions = getTimeOptions();
 
     const aforoExceeded = auditorio && data.aforo_estimado !== '' && (data.aforo_estimado > auditorio.capacidad);
 
@@ -131,39 +91,6 @@ export function Step3DetallesEvento({ data, auditorio, onDataChange }: Step3Prop
                 />
             </div>
 
-            {/* Time Selection */}
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Hora Inicio
-                    </label>
-                    <select
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]"
-                        value={data.horaInicio}
-                        onChange={(e) => handleTimeChange('horaInicio', e.target.value)}
-                    >
-                        {/* Filter options to ensure start < end implies start < max */}
-                        {timeOptions.filter(t => t !== timeOptions[timeOptions.length - 1]).map(time => (
-                            <option key={time} value={time}>{time}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Hora Fin
-                    </label>
-                    <select
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]"
-                        value={data.horaFin}
-                        onChange={(e) => handleTimeChange('horaFin', e.target.value)}
-                    >
-                        {/* Filter options to ensure end > start */}
-                        {timeOptions.filter(t => t > data.horaInicio).map(time => (
-                            <option key={time} value={time}>{time}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
 
             {/* Description */}
             <div>
@@ -212,26 +139,53 @@ export function Step3DetallesEvento({ data, auditorio, onDataChange }: Step3Prop
             </div>
 
             {/* Requerimientos */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Requerimientos Adicionales
-                </label>
-                <div className="space-y-2">
-                    {REQUERIMIENTOS_OPTIONS.map((req) => (
-                        <div key={req} className="flex items-center">
+            <div className="space-y-4">
+                <div className="flex flex-col gap-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                        ¿Requiere equipos tecnológicos o apoyo técnico? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex gap-6 mt-1">
+                        <label className="flex items-center cursor-pointer group">
                             <input
-                                id={`req-${req}`}
-                                type="checkbox"
-                                className="h-4 w-4 text-[var(--primary-color)] border-gray-300 rounded focus:ring-[var(--primary-color)]"
-                                checked={data.requerimientos_tecnicos.includes(req)}
-                                onChange={() => handleRequerimientoToggle(req)}
+                                type="radio"
+                                name="requiere_tecnico"
+                                value="Sí"
+                                checked={data.requerimientos_tecnicos.includes('Sí')}
+                                onChange={() => handleRequerimientosRadioChange('Sí')}
+                                className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
                             />
-                            <label htmlFor={`req-${req}`} className="ml-2 block text-sm text-gray-900">
-                                {req}
-                            </label>
-                        </div>
-                    ))}
+                            <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">Sí, requiero</span>
+                        </label>
+                        <label className="flex items-center cursor-pointer group">
+                            <input
+                                type="radio"
+                                name="requiere_tecnico"
+                                value="No"
+                                checked={data.requerimientos_tecnicos.includes('No')}
+                                onChange={() => handleRequerimientosRadioChange('No')}
+                                className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                            />
+                            <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900 transition-colors">No requiero</span>
+                        </label>
+                    </div>
                 </div>
+
+                {data.requerimientos_tecnicos.includes('Sí') && (
+                    <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-md animate-fade-in">
+                        <div className="flex">
+                            <div className="flex-shrink-0">
+                                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <div className="ml-3">
+                                <p className="text-sm text-yellow-800">
+                                    Si necesita requerimientos adicionales como <strong>videobeam, micrófono o sonido</strong>, por favor comunicarse con el administrador del sistema para coordinar la entrega.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <hr className="border-gray-200 my-6" />

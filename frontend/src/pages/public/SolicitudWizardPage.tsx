@@ -94,8 +94,12 @@ export default function SolicitudWizardPage() {
         auditorio: selectedSlot ? { id: selectedSlot.auditorioId, nombre: 'Auditorio Filomena', capacidad: 60, ubicacion: 'Sede Central', activo: true } : null,
         fecha: selectedSlot ? selectedSlot.fechaInicio.split('T')[0] : '',
         jornada: (selectedSlot?.jornada as Jornada) || '',
-        horaInicio: selectedSlot?.jornada === 'MAÑANA' ? '08:00' : selectedSlot?.jornada === 'TARDE' ? '14:00' : '08:00',
-        horaFin: selectedSlot?.jornada === 'MAÑANA' ? '12:00' : selectedSlot?.jornada === 'TARDE' ? '18:00' : '18:00',
+        horaInicio: selectedSlot
+            ? `${new Date(selectedSlot.fechaInicio).getHours().toString().padStart(2, '0')}:${new Date(selectedSlot.fechaInicio).getMinutes().toString().padStart(2, '0')}`
+            : '08:00',
+        horaFin: selectedSlot
+            ? `${new Date(selectedSlot.fechaFin).getHours().toString().padStart(2, '0')}:${new Date(selectedSlot.fechaFin).getMinutes().toString().padStart(2, '0')}`
+            : '18:00',
         titulo: '',
         descripcion: '',
         aforo_estimado: '',
@@ -114,10 +118,10 @@ export default function SolicitudWizardPage() {
 
     console.log("Wizard Render - selectedSlot:", selectedSlot, "Initialized:", isInitialized);
 
-    // GUARD: Strict dependency on selectedSlot, AFTER hooks are initialized
+    // GUARD: Only redirect if it's admin view without a slot. Public app allows starting from scratch (mobile).
     useEffect(() => {
-        if (isInitialized && !selectedSlot) {
-            navigate(isAdminView ? '/admin/calendario' : '/agenda');
+        if (isInitialized && !selectedSlot && isAdminView) {
+            navigate('/admin/calendario');
         }
     }, [selectedSlot, navigate, isInitialized, isAdminView]);
 
@@ -206,20 +210,67 @@ export default function SolicitudWizardPage() {
         isNextDisabled = !wizardData.entity;
         helperText = isNextDisabled ? "Seleccione su dependencia para continuar." : "";
     } else if (currentStep === 2) {
-        // Step 2 is read-only, always valid if data exists (checked by guard)
-        isNextDisabled = false;
+        // On mobile we must ensure fecha and jornada are selected.
+        const hasBasicData = wizardData.fecha && wizardData.jornada && wizardData.auditorio;
+        
+        // Time Validation Logic (Mirroring Backend)
+        let timeError = "";
+        if (hasBasicData && !isAdminView) {
+            const now = new Date();
+            const selectedDate = new Date(wizardData.fecha + 'T00:00:00');
+            
+            // Normalize dates for comparison (ignoring time)
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            
+            const currentHour = now.getHours();
+            const timeDiff = (new Date(`${wizardData.fecha}T${wizardData.horaInicio}`).getTime() - now.getTime()) / (1000 * 60 * 60);
+
+            if (selectedDate.getTime() === today.getTime()) {
+                if (currentHour >= 17) {
+                    timeError = "No es posible programar eventos para hoy después de las 17:00.";
+                } else if (wizardData.jornada === 'MAÑANA' && currentHour >= 12) {
+                    timeError = "No es posible programar la jornada MAÑANA para hoy.";
+                } else if (wizardData.jornada === 'TODO_EL_DIA' && currentHour >= 13) {
+                    timeError = "No es posible programar la jornada TODO_EL_DIA para hoy.";
+                } else if (timeDiff < 24) {
+                    // This will likely trigger for all today requests if 24h is strict
+                    timeError = "Las solicitudes deben realizarse con mínimo 24 horas de anticipación.";
+                }
+            } else if (selectedDate.getTime() === tomorrow.getTime() && currentHour >= 17) {
+                timeError = "La agenda para mañana ya está cerrada (después de las 17:00).";
+            } else if (timeDiff < 24) {
+                timeError = "Las solicitudes deben realizarse con mínimo 24 horas de anticipación.";
+            }
+        }
+
+        isNextDisabled = !hasBasicData || !!timeError;
+        helperText = !hasBasicData ? "Seleccione auditorio, fecha y jornada." : timeError;
     } else if (currentStep === 3) {
-        const invalidDetails = !wizardData.titulo || wizardData.aforo_estimado === '' || wizardData.aforo_estimado <= 0;
+        const hasTitle = !!wizardData.titulo;
+        const hasValidAforo = wizardData.aforo_estimado !== '' && wizardData.aforo_estimado > 0;
+        const hasRequerimientosSelection = wizardData.requerimientos_tecnicos.length > 0;
         const capacityExceeded = !!wizardData.auditorio && typeof wizardData.aforo_estimado === 'number' && wizardData.aforo_estimado > wizardData.auditorio.capacidad;
-        isNextDisabled = invalidDetails || capacityExceeded;
-        helperText = isNextDisabled ? "Complete los detalles del evento." : "";
+        
+        isNextDisabled = !hasTitle || !hasValidAforo || !hasRequerimientosSelection || capacityExceeded;
+        
+        if (!hasTitle || !hasValidAforo) {
+            helperText = "Complete el título y aforo del evento.";
+        } else if (!hasRequerimientosSelection) {
+            helperText = "Indique si requiere equipos tecnológicos.";
+        } else if (capacityExceeded) {
+            helperText = "El aforo excede la capacidad del auditorio.";
+        } else {
+            helperText = "";
+        }
     }
 
     // -------------------------------------------------------------
     // Guards (Must be after all hooks)
     // -------------------------------------------------------------
     if (!isInitialized) return <div className="p-10 flex justify-center text-gray-500">Cargando reserva...</div>;
-    if (!selectedSlot) return null;
+    // Removed the !selectedSlot return null guard to allow entering from mobile landing page.
 
     return (
         <div className="max-w-4xl mx-auto py-8 px-4">
@@ -256,98 +307,78 @@ export default function SolicitudWizardPage() {
                         {/* ... existing WizardStepIndicator ... */}
 
 
-                        {/* GUARD: Check for valid context */}
-                        {(!wizardData.fecha || !wizardData.jornada) ? (
-                            <div className="flex flex-col items-center justify-center h-full py-10 text-center animate-fade-in">
-                                <div className="bg-orange-50 p-4 rounded-full mb-4">
-                                    <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">Solicitud no iniciada</h3>
-                                <p className="text-gray-500 max-w-md mb-6">
-                                    Debe seleccionar un bloque disponible en el calendario para iniciar una solicitud.
-                                </p>
-                                <a
-                                    href={isAdminView ? "/admin/calendario" : "/"}
-                                    className="px-6 py-2 bg-[var(--primary-color)] text-white rounded-md hover:opacity-90 transition-opacity font-medium no-underline"
-                                >
-                                    Ir al Calendario
-                                </a>
+                        {currentStep === 1 && (
+                            <div className="animate-fade-in">
+                                <h2 className="text-lg font-semibold mb-6">Identificación del Solicitante</h2>
+                                <EntitySelectorStep
+                                    onEntitySelect={handleEntitySelect}
+                                    initialEntity={wizardData.entity}
+                                />
                             </div>
-                        ) : (
-                            <>
-                                {currentStep === 1 && (
-                                    <div className="animate-fade-in">
-                                        <h2 className="text-lg font-semibold mb-6">Identificación del Solicitante</h2>
-                                        <EntitySelectorStep
-                                            onEntitySelect={handleEntitySelect}
-                                            initialEntity={wizardData.entity}
-                                        />
-                                    </div>
-                                )}
+                        )}
 
-                                {currentStep === 2 && (
-                                    <div className="animate-fade-in">
-                                        <div className="mb-6">
-                                            <h2 className="text-lg font-semibold text-[var(--primary-color)]">
-                                                Paso 2 de 4 – Confirmación de reserva
-                                            </h2>
-                                            <p className="text-sm text-[var(--text-secondary)] mt-1">
-                                                Verifique los datos de la reserva seleccionada en el calendario.
-                                            </p>
-                                        </div>
-                                        <Step2AuditorioFecha
-                                            data={wizardData}
-                                            onDataChange={handleDataChange}
-                                        />
-                                    </div>
-                                )}
-                                {currentStep === 3 && (
-                                    <div className="animate-fade-in">
-                                        <div className="mb-6">
-                                            <h2 className="text-lg font-semibold text-[var(--primary-color)]">
-                                                Paso 3 de 4 – Detalles del Evento
-                                            </h2>
-                                            <p className="text-sm text-[var(--text-secondary)] mt-1">
-                                                Describe el propósito y necesidades técnicas de tu evento
-                                            </p>
-                                        </div>
-                                        <Step3DetallesEvento
-                                            data={wizardData}
-                                            auditorio={wizardData.auditorio}
-                                            onDataChange={handleDataChange}
-                                        />
-                                    </div>
-                                )}
-                                {currentStep === 4 && (
-                                    <div className="animate-fade-in">
-                                        <Step4Responsable
-                                            data={wizardData}
-                                            onConfirm={handleConfirm}
-                                            onBack={() => setCurrentStep(3)}
-                                            onDataChange={handleDataChange}
-                                            submissionResult={submissionResult}
-                                            isSubmitting={isSubmitting}
-                                        />
-                                    </div>
-                                )}
-                            </>
+                        {currentStep === 2 && (
+                            <div className="animate-fade-in">
+                                <div className="mb-6">
+                                    <h2 className="text-lg font-semibold text-[var(--primary-color)]">
+                                        Paso 2 de 4 – Confirmación de reserva
+                                    </h2>
+                                    <p className="text-sm text-[var(--text-secondary)] mt-1">
+                                        Verifique los datos de la reserva seleccionada en el calendario.
+                                    </p>
+                                </div>
+                                <Step2AuditorioFecha
+                                    data={wizardData}
+                                    onDataChange={handleDataChange}
+                                    isAdminView={isAdminView}
+                                />
+                            </div>
+                        )}
+                        {currentStep === 3 && (
+                            <div className="animate-fade-in">
+                                <div className="mb-6">
+                                    <h2 className="text-lg font-semibold text-[var(--primary-color)]">
+                                        Paso 3 de 4 – Detalles del Evento
+                                    </h2>
+                                    <p className="text-sm text-[var(--text-secondary)] mt-1">
+                                        Describe el propósito y necesidades técnicas de tu evento
+                                    </p>
+                                </div>
+                                <Step3DetallesEvento
+                                    data={wizardData}
+                                    auditorio={wizardData.auditorio}
+                                    onDataChange={handleDataChange}
+                                />
+                            </div>
+                        )}
+                        {currentStep === 4 && (
+                            <div className="animate-fade-in">
+                                <Step4Responsable
+                                    data={wizardData}
+                                    onConfirm={handleConfirm}
+                                    onBack={() => setCurrentStep(3)}
+                                    onDataChange={handleDataChange}
+                                    submissionResult={submissionResult}
+                                    isSubmitting={isSubmitting}
+                                />
+                            </div>
                         )}
                     </div>
 
                     {/* Wizard Footer Actions - Hidden on Step 4 AND if blocked */}
-                    {(currentStep !== 4 && wizardData.fecha && wizardData.jornada && !holdExpired) && (
+                    {(currentStep !== 4 && !holdExpired) && (
                         <div className="bg-white sm:bg-gray-50 px-6 py-4 border-t border-[var(--border-color)] flex flex-row justify-between items-center fixed bottom-0 left-0 right-0 z-20 sm:static sm:z-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] sm:shadow-none">
                             <button
-                                disabled={currentStep === 1}
-                                onClick={() => setCurrentStep(p => Math.max(1, p - 1))}
-                                className={`px-4 py-2 rounded text-sm font-medium transition-colors 
-                                ${currentStep === 1
-                                        ? 'invisible'
-                                        : 'text-gray-500 hover:text-gray-900 bg-transparent hover:bg-gray-100'}`}
+                                onClick={() => {
+                                    if (currentStep === 1) {
+                                        navigate(isAdminView ? "/admin/calendario" : "/");
+                                    } else {
+                                        setCurrentStep(p => Math.max(1, p - 1));
+                                    }
+                                }}
+                                className="px-4 py-2 rounded text-sm font-medium transition-colors text-gray-500 hover:text-gray-900 bg-transparent hover:bg-gray-100"
                             >
-                                ← Atrás
+                                {currentStep === 1 ? 'Cancelar' : '← Atrás'}
                             </button>
 
                             <div className="flex flex-col items-end">

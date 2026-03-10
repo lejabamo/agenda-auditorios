@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import './InstitutionalDisclaimerModal.css';
 
 interface InstitutionalDisclaimerModalProps {
@@ -51,15 +52,23 @@ const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> 
     const [accepted, setAccepted] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const acceptButtonRef = useRef<HTMLButtonElement>(null);
+    const location = useLocation();
 
+    // Reset disclaimer check on route change
     useEffect(() => {
-        // Check if user already accepted the disclaimer in the current session
+        // If we land back in the home page, we want the user to accept 
+        // the terms again for any new request attempt.
+        if (location.pathname === '/') {
+            sessionStorage.removeItem(STORAGE_KEY);
+        }
+
         const hasAccepted = sessionStorage.getItem(STORAGE_KEY) === 'true';
         if (!hasAccepted) {
             setIsOpen(true);
+            setAccepted(false); // Reset checkbox for new flow
             document.body.style.overflow = 'hidden';
         }
-    }, []);
+    }, [location.pathname]);
 
     // Focus trap implementation
     useEffect(() => {

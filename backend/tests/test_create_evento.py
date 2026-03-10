@@ -11,7 +11,9 @@ def test_happy_path_create_evento(test_client, db_session):
     # Since we can't rely on existing data, let's assume seed data exists or we mock the service.
     # However, for integration test, we use real DB with rollback.
     
-    fecha_inicio = datetime.now() + timedelta(hours=50)
+    # Ensure a date that is surely empty in the DB (e.g. year 2027)
+    # But still > 48h from now to satisfy business rules.
+    fecha_inicio = datetime(2027, 4, 15, 10, 0, 0)
     fecha_fin = fecha_inicio + timedelta(hours=2)
     
     payload = {
