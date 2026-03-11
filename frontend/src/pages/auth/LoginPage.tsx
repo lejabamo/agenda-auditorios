@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function LoginPage() {
     const { login } = useAuth();
@@ -81,6 +81,11 @@ export default function LoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="pl-10 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-all"
                             />
+                        </div>
+                        <div className="flex items-center justify-end mt-2">
+                            <Link to="/auth/forgot-password" className="text-sm font-medium text-[var(--primary-color)] hover:underline">
+                                ¿Olvidaste tu contraseña?
+                            </Link>
                         </div>
                     </div>
 

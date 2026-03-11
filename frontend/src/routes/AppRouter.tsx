@@ -18,6 +18,8 @@ import AdminEntidadesPage from '@/pages/admin/AdminEntidadesPage';
 import AdminAuditoriosPage from '@/pages/admin/AdminAuditoriosPage';
 import AdminSolicitudDetailPage from '@/pages/admin/AdminSolicitudDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 
 export const router = createBrowserRouter([
     // Public Routes
@@ -48,6 +50,14 @@ export const router = createBrowserRouter([
             {
                 path: 'login',
                 element: <LoginPage />,
+            },
+            {
+                path: 'forgot-password',
+                element: <ForgotPasswordPage />,
+            },
+            {
+                path: 'reset-password',
+                element: <ResetPasswordPage />,
             },
         ],
     },

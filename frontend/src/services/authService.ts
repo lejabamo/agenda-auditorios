@@ -41,6 +41,44 @@ export const authService = {
         }
     },
 
+    forgotPassword: async (email: string, frontendUrl: string = window.location.origin) => {
+        try {
+            const response = await fetch(`${API_URL}/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, frontend_url: frontendUrl }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new ApiError(error.error || 'Error al solicitar recuperación', response.status);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            throw error;
+        }
+    },
+
+    resetPassword: async (token: string, password: string) => {
+        try {
+            const response = await fetch(`${API_URL}/auth/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, password }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new ApiError(error.error || 'Error al restablecer contraseña', response.status);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Reset password error:', error);
+            throw error;
+        }
+    },
+
     logout: () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');

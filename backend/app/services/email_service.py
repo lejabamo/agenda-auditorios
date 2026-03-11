@@ -176,6 +176,27 @@ Secretaría de Educación del Cauca
         EmailService._send(subject, body, admin_email)
 
     @staticmethod
+    def send_password_recovery(admin_email, token, frontend_url):
+        """Notifica al administrador con un enlace para recuperar su contraseña."""
+        reset_link = f"{frontend_url}/auth/reset-password?token={token}"
+        subject = "🔒 Recuperación de Contraseña — Sistema de Agenda"
+        body = f"""Hola Administrador,
+
+Hemos recibido una solicitud para restablecer tu contraseña en el Sistema de Agenda de Auditorios.
+
+Por favor, haz clic en el siguiente enlace o cópialo en tu navegador para crear una nueva contraseña. 
+Este enlace expirará en 1 hora.
+
+Enlace: {reset_link}
+
+Si no solicitaste este cambio, puedes ignorar este correo y tu contraseña permanecerá segura.
+
+Sistema de Agenda de Auditorios
+Secretaría de Educación del Cauca
+"""
+        EmailService._send(subject, body, admin_email)
+
+    @staticmethod
     def _send(subject: str, body: str, recipient: str):
         """
         Internal method to send a plain-text email via Flask-Mail.

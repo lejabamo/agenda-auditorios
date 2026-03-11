@@ -30,6 +30,17 @@ def generate_token(admin_id):
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 
+def generate_recovery_token(admin_id):
+    """Generate a signed JWT token for password recovery (expires in 1 hour)."""
+    payload = {
+        "sub": str(admin_id),
+        "role": "RECOVERY",
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+        "iat": datetime.datetime.utcnow(),
+    }
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+
 def decode_token(token):
     """Decode and verify a JWT token. Returns payload dict or None on failure."""
     try:
