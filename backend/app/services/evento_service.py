@@ -110,18 +110,7 @@ class EventoService:
             if jornada == 'TODO_EL_DIA' and current_hour >= 13:
                 raise ValidationError(f"No es posible programar la jornada TODO_EL_DIA porque la hora actual es {time_str}")
 
-        # Business Rule: Daily Agenda Closure (5 PM Rule for Tomorrow)
-        # This is checked FIRST because it's a categorical block: after 17:00,
-        # all requests for the next day are blocked regardless of 24h notice.
-        tomorrow = now_local.date() + timedelta(days=1)
-        if fecha_start_local.date() == tomorrow and now_local.hour >= 17:
-             raise ValidationError("La agenda para el día siguiente se encuentra cerrada a partir de las 17:00. Las solicitudes deben realizarse con mínimo 24 horas de anticipación y antes de las 17:00.")
 
-        # Business Rule: Minimum Advance Notice (24 hours)
-        # Applies to all other cases not already blocked by the 5 PM closure rule.
-        time_difference = fecha_start_local - now_local
-        if time_difference < timedelta(hours=24):
-             raise ValidationError("Las solicitudes deben realizarse con mínimo 24 horas de anticipación")
 
 
         # Validaciones de contacto (Fase 4)

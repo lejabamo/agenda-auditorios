@@ -225,8 +225,6 @@ export default function SolicitudWizardPage() {
             tomorrow.setDate(today.getDate() + 1);
             
             const currentHour = now.getHours();
-            const timeDiff = (new Date(`${wizardData.fecha}T${wizardData.horaInicio}`).getTime() - now.getTime()) / (1000 * 60 * 60);
-
             if (selectedDate.getTime() === today.getTime()) {
                 if (currentHour >= 17) {
                     timeError = "No es posible programar eventos para hoy después de las 17:00.";
@@ -234,14 +232,7 @@ export default function SolicitudWizardPage() {
                     timeError = "No es posible programar la jornada MAÑANA para hoy.";
                 } else if (wizardData.jornada === 'TODO_EL_DIA' && currentHour >= 13) {
                     timeError = "No es posible programar la jornada TODO_EL_DIA para hoy.";
-                } else if (timeDiff < 24) {
-                    // This will likely trigger for all today requests if 24h is strict
-                    timeError = "Las solicitudes deben realizarse con mínimo 24 horas de anticipación.";
                 }
-            } else if (selectedDate.getTime() === tomorrow.getTime() && currentHour >= 17) {
-                timeError = "La agenda para mañana ya está cerrada (después de las 17:00).";
-            } else if (timeDiff < 24) {
-                timeError = "Las solicitudes deben realizarse con mínimo 24 horas de anticipación.";
             }
         }
 
