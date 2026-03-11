@@ -5,6 +5,7 @@ import { es } from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useNavigate } from 'react-router-dom';
 import { eventoService } from '@/services/eventoService';
+import { auditorioService } from '@/services/auditorioService';
 import { useBooking } from '@/context/BookingContext';
 
 // Setup Localizer
@@ -66,6 +67,7 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
     const [date, setDate] = useState(new Date());
     const navigate = useNavigate();
     const { setBookingSlot } = useBooking();
+    const [auditorioIdState, setAuditorioIdState] = useState<number>(1);
 
     const fetchEvents = async () => {
         try {
@@ -86,7 +88,22 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
     };
 
     useEffect(() => {
-        fetchEvents();
+        const init = async () => {
+            try {
+                const auditorios = await auditorioService.getActiveAuditorios();
+                const filomena = auditorios.find(a => a.nombre.toLowerCase().includes('filomena'));
+                if (filomena) {
+                    setAuditorioIdState(filomena.id);
+                } else if (auditorios.length > 0) {
+                    setAuditorioIdState(auditorios[0].id);
+                }
+            } catch (e) {
+                console.error("Error fetching auditorio", e);
+            }
+            fetchEvents();
+        };
+        init();
+        
         // Poll every minute to refresh holds/status
         const interval = setInterval(fetchEvents, 60000);
         return () => clearInterval(interval);
@@ -282,7 +299,7 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
             const holdResponse = await eventoService.createHold({
                 fecha: fechaStr,
                 jornada: selectedJornadaOption, // Use the selected option from modal
-                auditorio_id: 1, // Filomena
+                auditorio_id: auditorioIdState, // dynamically fetched
                 hora_inicio: format(selectedSlot.start, 'HH:mm'),
                 hora_fin: format(selectedSlot.end, 'HH:mm')
             });
@@ -295,7 +312,7 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
 
             // 2. Store selection and navigate (Include holdId)
             setBookingSlot({
-                auditorioId: 1,
+                auditorioId: auditorioIdState,
                 fechaInicio: selectedSlot.start.toISOString(),
                 fechaFin: selectedSlot.end.toISOString(), // Ideally update this based on jornada but step 2 displays generic date
                 jornada: selectedJornadaOption as any,
