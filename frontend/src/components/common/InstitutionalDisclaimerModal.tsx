@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import './InstitutionalDisclaimerModal.css';
 
@@ -50,7 +50,9 @@ const Icons = {
 const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> = ({ onAccept }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [accepted, setAccepted] = useState(false);
+    const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const acceptButtonRef = useRef<HTMLButtonElement>(null);
     const location = useLocation();
 
@@ -66,9 +68,31 @@ const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> 
         if (!hasAccepted) {
             setIsOpen(true);
             setAccepted(false); // Reset checkbox for new flow
+            setHasScrolledToBottom(false); // Force scroll again
             document.body.style.overflow = 'hidden';
         }
     }, [location.pathname]);
+
+    // Scroll listener to detect if user reached bottom
+    const handleScroll = useCallback(() => {
+        if (!scrollContainerRef.current || hasScrolledToBottom) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+        // Threshold: 20px from bottom
+        if (scrollTop + clientHeight >= scrollHeight - 20) {
+            setHasScrolledToBottom(true);
+        }
+    }, [hasScrolledToBottom]);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (isOpen && container) {
+            // Check if content is already smaller than container (no scroll needed)
+            if (container.scrollHeight <= container.clientHeight) {
+                setHasScrolledToBottom(true);
+            }
+        }
+    }, [isOpen]);
 
     // Focus trap implementation
     useEffect(() => {
@@ -143,7 +167,11 @@ const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> 
                 </div>
 
                 {/* Contenido */}
-                <div className="idm-content-scroll">
+                <div 
+                    className="idm-content-scroll" 
+                    ref={scrollContainerRef}
+                    onScroll={handleScroll}
+                >
                     <div className="idm-content">
                         <p className="idm-intro">
                             Antes de realizar una solicitud para el uso del auditorio, por favor revise y acepte las siguientes condiciones institucionales:
@@ -226,17 +254,23 @@ const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> 
 
                 {/* Acciones */}
                 <div className="idm-actions">
-                    <label className="idm-checkbox-label">
+                    <label className={`idm-checkbox-label ${!hasScrolledToBottom ? 'idm-disabled-label' : ''}`}>
                         <div className="idm-checkbox-wrapper">
                             <input
                                 type="checkbox"
                                 className="idm-checkbox"
                                 checked={accepted}
                                 onChange={(e) => setAccepted(e.target.checked)}
+                                disabled={!hasScrolledToBottom}
                                 aria-label="Aceptar condiciones de uso"
                             />
                         </div>
-                        <span className="idm-checkbox-text">He leído y acepto las condiciones de uso del Auditorio Filomena Segura para continuar.</span>
+                        <span className="idm-checkbox-text">
+                            {!hasScrolledToBottom 
+                                ? "Por favor lea hasta el final para continuar..." 
+                                : "He leído y acepto las condiciones de uso del Auditorio Filomena Segura para continuar."
+                            }
+                        </span>
                     </label>
                     <button
                         ref={acceptButtonRef}

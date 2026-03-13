@@ -290,6 +290,12 @@
     cursor: pointer;
     user-select: none;
     flex: 1;
+    transition: opacity 0.3s ease;
+}
+
+.idm-disabled-label {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .idm-checkbox-wrapper {

@@ -139,6 +139,11 @@ export default function SolicitudWizardPage() {
         setWizardData(prev => ({ ...prev, ...newData }));
     }, []);
 
+    // Scroll to top on step change (Crucial for mobile UX)
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [currentStep]);
+
     const handleNext = () => {
         setSubmissionResult(null);
         if (currentStep === 1 && wizardData.entity) {
