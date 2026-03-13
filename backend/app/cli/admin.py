@@ -36,3 +36,31 @@ def create_admin_command():
         session.rollback()
     finally:
         session.close()
+@click.command("reset-admin-password")
+@with_appcontext
+def reset_admin_password_command():
+    """Reset the password for an existing admin user."""
+    click.echo("Resetting Admin Password...")
+    
+    email = click.prompt("Enter admin email", type=str)
+    
+    session = SessionLocal()
+    try:
+        stmt = select(AdminUser).where(AdminUser.email == email)
+        admin = session.execute(stmt).scalar_one_or_none()
+        
+        if not admin:
+            click.echo(f"Error: Admin user '{email}' does not exist.")
+            return
+
+        password = click.prompt("Enter NEW password", hide_input=True, confirmation_prompt=True)
+        
+        admin.set_password(password)
+        session.commit()
+        click.echo(f"Success: Password for '{email}' has been updated.")
+        
+    except Exception as e:
+        click.echo(f"Error: {e}")
+        session.rollback()
+    finally:
+        session.close()
