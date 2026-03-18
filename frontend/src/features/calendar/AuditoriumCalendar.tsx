@@ -61,6 +61,35 @@ const CustomEvent = ({ event }: { event: CalendarEvent }) => {
     );
 };
 
+const CustomToolbar = (toolbar: any) => {
+    const goToBack = () => { toolbar.onNavigate('PREV'); };
+    const goToNext = () => { toolbar.onNavigate('NEXT'); };
+    const goToToday = () => { toolbar.onNavigate('TODAY'); };
+
+    return (
+        <div className="rbc-toolbar">
+            <span className="rbc-btn-group">
+                <button type="button" onClick={goToBack}>Anterior</button>
+                <button type="button" onClick={goToToday}>Hoy</button>
+                <button type="button" onClick={goToNext}>Siguiente</button>
+            </span>
+            <span className="rbc-toolbar-label">{toolbar.label}</span>
+            <span className="rbc-btn-group">
+                {toolbar.views.map((view: string) => (
+                    <button
+                        key={view}
+                        type="button"
+                        className={toolbar.view === view ? 'rbc-active' : ''}
+                        onClick={() => toolbar.onView(view)}
+                    >
+                        {toolbar.messages[view]}
+                    </button>
+                ))}
+            </span>
+        </div>
+    );
+};
+
 export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: string }) {
     const [events, setEvents] = useState<CalendarEvent[]>([]);
     const [view, setView] = useState<View>(Views.WEEK);
@@ -481,7 +510,8 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
                         event: "Evento"
                     }}
                     components={{
-                        event: CustomEvent
+                        event: CustomEvent,
+                        toolbar: CustomToolbar
                     }}
                 />
             </div>

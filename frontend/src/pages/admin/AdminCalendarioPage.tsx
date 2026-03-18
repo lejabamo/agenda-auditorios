@@ -48,6 +48,35 @@ const EmailRow = ({ icon, label, recipient }: { icon: string; label: string; rec
     </div>
 );
 
+const CustomToolbar = (toolbar: any) => {
+    const goToBack = () => { toolbar.onNavigate('PREV'); };
+    const goToNext = () => { toolbar.onNavigate('NEXT'); };
+    const goToToday = () => { toolbar.onNavigate('TODAY'); };
+
+    return (
+        <div className="rbc-toolbar">
+            <span className="rbc-btn-group">
+                <button type="button" onClick={goToBack}>Anterior</button>
+                <button type="button" onClick={goToToday}>Hoy</button>
+                <button type="button" onClick={goToNext}>Siguiente</button>
+            </span>
+            <span className="rbc-toolbar-label">{toolbar.label}</span>
+            <span className="rbc-btn-group">
+                {toolbar.views.map((view: string) => (
+                    <button 
+                        key={view} 
+                        type="button" 
+                        className={toolbar.view === view ? 'rbc-active' : ''}
+                        onClick={() => toolbar.onView(view)}
+                    >
+                        {toolbar.messages[view]}
+                    </button>
+                ))}
+            </span>
+        </div>
+    );
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function AdminCalendarioPage() {
     const navigate = useNavigate();
@@ -287,7 +316,7 @@ export default function AdminCalendarioPage() {
                     endAccessor="end"
                     style={{ height: '100%' }}
                     culture='es'
-                    components={{ event: CustomEvent }}
+                    components={{ event: CustomEvent, toolbar: CustomToolbar }}
                     views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
                     defaultView={Views.WEEK}
                     view={view}
