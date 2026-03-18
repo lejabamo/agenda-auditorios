@@ -224,10 +224,17 @@ class EventoService:
     def get_all(self, filters: dict = None) -> List[Evento]:
         stmt = select(Evento)
 
-        if filters and filters.get('estado') in ['PENDIENTE', 'APROBADO', 'RECHAZADO', 'CANCELADO', 'BLOQUEO_TEMPORAL']:
-             stmt = stmt.where(Evento.estado == filters.get('estado'))
+        # Multi-state filtering support
+        estado_filter = filters.get('estado') if filters else None
+        if estado_filter:
+            if ',' in str(estado_filter):
+                states = [s.strip() for s in str(estado_filter).split(',')]
+                stmt = stmt.where(Evento.estado.in_(states))
+            elif estado_filter in ['PENDIENTE', 'APROBADO', 'RECHAZADO', 'CANCELADO', 'BLOQUEO_TEMPORAL']:
+                stmt = stmt.where(Evento.estado == estado_filter)
         else:
-             stmt = stmt.where(Evento.estado != 'CANCELADO') # Default: oculta cancelados
+            # Default: hide canceled and rejected events (prevents clogging calendar/general lists)
+            stmt = stmt.where(Evento.estado.notin_(['CANCELADO', 'RECHAZADO']))
 
         if filters:
 

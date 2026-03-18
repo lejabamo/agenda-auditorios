@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Auditorio } from '@/types/models/auditorio';
+import { auditorioService } from '@/services/auditorioService';
 
 export type Jornada = 'MAÑANA' | 'TARDE' | 'TODO_EL_DIA';
 
@@ -16,20 +17,36 @@ interface Step2Props {
     onDataChange: (newData: Partial<any>) => void;
 }
 
-// Temporary static list since we only have one right now, or we could fetch from API
-const AVAILABLE_AUDITORIOS: Auditorio[] = [
-    { id: 1, nombre: 'Auditorio Filomena', capacidad: 60, ubicacion: 'Sede Central', activo: true }
-];
-
 export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Props) {
-    // When instantiated from mobile flow without a hold, allow selection.
-    // When instantiated from desktop calendar flow, values will be pre-filled and we can show them as read-only or selected.
+    const [fetchedAuditorios, setFetchedAuditorios] = useState<Auditorio[]>([]);
+    const [isLoadingAuditorios, setIsLoadingAuditorios] = useState(!data.auditorio);
 
-    const isReadOnly = !!data.holdId; // If there's a hold, they selected from calendar
+    // Fetch active auditoriums from API
+    useEffect(() => {
+        const fetchAuditorios = async () => {
+            try {
+                const results = await auditorioService.getActiveAuditorios();
+                setFetchedAuditorios(results);
+                
+                // If it's a new flow (no data.auditorio), auto-select the first one
+                if (!data.auditorio && results.length > 0) {
+                    onDataChange({ auditorio: results[0] });
+                }
+            } catch (error) {
+                console.error('Error fetching auditorios:', error);
+            } finally {
+                setIsLoadingAuditorios(false);
+            }
+        };
+
+        fetchAuditorios();
+    }, [data.auditorio, onDataChange]);
+
+    const isReadOnly = !!data.holdId;
 
     const handleAuditorioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = parseInt(e.target.value);
-        const auditorio = AVAILABLE_AUDITORIOS.find(a => a.id === selectedId) || null;
+        const auditorio = fetchedAuditorios.find(a => a.id === selectedId) || null;
         onDataChange({ auditorio });
     };
 
@@ -55,25 +72,16 @@ export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Pr
         onDataChange({ [field]: value });
     };
 
-    // Derived constraints for time inputs
     const getMinHoraInicio = () => {
         if (data.jornada === 'TARDE') return '14:00';
-        return '08:00'; // Default min for MAÑANA or TODO_EL_DIA
+        return '08:00';
     };
 
     const getMaxHoraFin = () => {
         if (data.jornada === 'MAÑANA') return '12:00';
-        return '18:00'; // Default max for TARDE or TODO_EL_DIA
+        return '18:00';
     };
 
-    // Initialize with Auditorio Filomena if null
-    useEffect(() => {
-        if (!data.auditorio) {
-            onDataChange({ auditorio: AVAILABLE_AUDITORIOS[0] });
-        }
-    }, [data.auditorio, onDataChange]);
-
-    // Helper functions for formatting
     const getTodayStr = () => {
         const d = new Date();
         const year = d.getFullYear();
@@ -87,29 +95,22 @@ export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Pr
         const now = new Date();
         const selectedDate = new Date(data.fecha + 'T00:00:00');
         
-        // Normalize today midnight
         const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const tomorrowAtMidnight = new Date(todayAtMidnight);
         tomorrowAtMidnight.setDate(todayAtMidnight.getDate() + 1);
         
         const currentHour = now.getHours();
-        
-        // Build the full ISO-like string for our selected start time
-        // Date input is YYYY-MM-DD, Time input is HH:mm
         const eventStart = new Date(`${data.fecha}T${data.horaInicio || '00:00'}:00`);
         const diffInHours = (eventStart.getTime() - now.getTime()) / (1000 * 60 * 60);
  
         if (selectedDate.getTime() === todayAtMidnight.getTime()) {
-            // Same day rules
             if (currentHour >= 17) return "No es posible programar eventos para hoy después de las 17:00.";
             if (data.jornada === 'MAÑANA' && currentHour >= 12) return "No es posible programar la jornada MAÑANA para hoy.";
             if (data.jornada === 'TODO_EL_DIA' && currentHour >= 13) return "No es posible programar la jornada TODO_EL_DIA para hoy.";
         } else if (selectedDate.getTime() === tomorrowAtMidnight.getTime()) {
-            // Tomorrow rules
             if (currentHour >= 17) return "La agenda para mañana ya está cerrada (solicite antes de las 17:00 de hoy).";
         }
  
-        // Global 24h rule (Backend line 123)
         if (diffInHours < 24) {
              return "Las solicitudes deben realizarse con mínimo 24 horas de anticipación.";
         }
@@ -119,7 +120,6 @@ export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Pr
  
     return (
         <div className="space-y-6">
-            {/* Time Validation Banner */}
             {(() => {
                 const timeError = getTimeValidationError();
                 if (!timeError) return null;
@@ -155,20 +155,30 @@ export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Pr
                         Auditorio / Espacio <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                        <select
-                            id="auditorio"
-                            value={data.auditorio?.id || ''}
-                            onChange={handleAuditorioChange}
-                            disabled={isReadOnly}
-                            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-transparent ${isReadOnly ? 'bg-gray-100 cursor-not-allowed text-gray-600 font-medium' : 'bg-white border-gray-300'}`}
-                        >
-                            {AVAILABLE_AUDITORIOS.map(a => (
-                                <option key={a.id} value={a.id}>{a.nombre}</option>
-                            ))}
-                        </select>
+                        {isLoadingAuditorios ? (
+                            <div className="w-full px-4 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-400 text-sm animate-pulse">
+                                Cargando espacios...
+                            </div>
+                        ) : (
+                            <select
+                                id="auditorio"
+                                value={data.auditorio?.id || ''}
+                                onChange={handleAuditorioChange}
+                                disabled={isReadOnly}
+                                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-transparent ${isReadOnly ? 'bg-gray-100 cursor-not-allowed text-gray-600 font-medium' : 'bg-white border-gray-300'}`}
+                            >
+                                <option value="" disabled>Seleccione un espacio...</option>
+                                {fetchedAuditorios.map(a => (
+                                    <option key={a.id} value={a.id}>{a.nombre}</option>
+                                ))}
+                                {fetchedAuditorios.length === 0 && (
+                                    <option value="" disabled>No hay espacios disponibles</option>
+                                )}
+                            </select>
+                        )}
                     </div>
                     {data.auditorio && (
-                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-1 animate-fade-in">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                             Capacidad: {data.auditorio.capacidad} personas max.
                         </p>
@@ -245,8 +255,6 @@ export function Step2AuditorioFecha({ data, onDataChange, isAdminView }: Step2Pr
                     </div>
                 </div>
             )}
-
-            {/* Aviso removed as per user request */}
         </div>
     );
 }

@@ -30,6 +30,9 @@ export default function AdminSolicitudesPage() {
 
             if (currentTab !== 'TODOS') {
                 filters.estado = currentTab;
+            } else {
+                // Return all relevant states for the 'All' tab explicitly
+                filters.estado = 'PENDIENTE,APROBADO,RECHAZADO,BLOQUEO_TEMPORAL';
             }
             if (selectedDate) {
                 filters.fecha = selectedDate;
