@@ -75,14 +75,14 @@ const CustomToolbar = (toolbar: any) => {
             </span>
             <span className="rbc-toolbar-label">{toolbar.label}</span>
             <span className="rbc-btn-group">
-                {toolbar.views.map((view: string) => (
+                {Array.isArray(toolbar.views) && toolbar.views.map((view: string) => (
                     <button
                         key={view}
                         type="button"
                         className={toolbar.view === view ? 'rbc-active' : ''}
                         onClick={() => toolbar.onView(view)}
                     >
-                        {toolbar.messages[view]}
+                        {toolbar.localizer.messages[view] || view}
                     </button>
                 ))}
             </span>
