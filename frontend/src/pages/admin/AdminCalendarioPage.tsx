@@ -179,7 +179,7 @@ export default function AdminCalendarioPage() {
     const eventPropGetter = (event: any) => {
         let backgroundColor = '#f3f4f6', color = '#374151';
         switch (event.status) {
-            case 'APROBADO': backgroundColor = '#dcfce7'; color = '#166534'; event.icon = '✅'; break;
+            case 'APROBADO': backgroundColor = '#003366'; color = '#ffffff'; event.icon = '✅'; break;
             case 'PENDIENTE':
             case 'BLOQUEO_TEMPORAL': backgroundColor = '#fef3c7'; color = '#92400e'; event.icon = '⏳'; break;
             case 'RECHAZADO': backgroundColor = '#fee2e2'; color = '#991b1b'; event.icon = '❌'; break;
@@ -290,7 +290,10 @@ export default function AdminCalendarioPage() {
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 text-xs font-medium bg-white p-3 rounded-lg border border-[var(--border-color)]">
-                <div className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-green-200 border border-green-800 flex items-center justify-center text-[0.7rem] shadow-sm">✅</span><span className="text-sm">Aprobado / Ocupado</span></div>
+                <div className="flex items-center gap-1.5">
+                    <span className="w-5 h-5 rounded-full bg-[#003366] border border-[#002244] flex items-center justify-center text-[0.7rem] shadow-sm text-white">✅</span>
+                    <span className="text-sm font-semibold">Reservado</span>
+                </div>
                 <div className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-amber-200 border border-amber-800 flex items-center justify-center text-[0.7rem] shadow-sm">⏳</span><span className="text-sm">Pendiente / Bloqueado</span></div>
                 <div className="flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-red-200 border border-red-800 flex items-center justify-center text-[0.7rem] shadow-sm">❌</span><span className="text-sm">Rechazado</span></div>
             </div>

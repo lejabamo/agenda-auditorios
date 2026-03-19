@@ -141,13 +141,14 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
     const eventPropGetter = (event: CalendarEvent) => {
         let backgroundColor = '#3174ad'; // Default Blue
         if (event.status === 'APROBADO') {
-            backgroundColor = '#ef4444'; // Red-500
+            backgroundColor = '#003366'; // Dark Blue (Midnight Blue)
         } else if (event.status === 'PENDIENTE' || event.status === 'BLOQUEO_TEMPORAL') {
             backgroundColor = '#f97316'; // Orange-500
         }
         return {
             style: {
                 backgroundColor,
+                color: 'white',
                 cursor: 'default' // Events are not clickable for booking
             }
         };
@@ -470,7 +471,7 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
                         <span className="w-4 h-4 bg-orange-500 rounded"></span> Solicitado/En Proceso
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="w-4 h-4 bg-red-500 rounded"></span> Ocupado
+                        <span className="w-4 h-4 bg-[#003366] rounded"></span> Reservado
                     </div>
                 </div>
             </header>
