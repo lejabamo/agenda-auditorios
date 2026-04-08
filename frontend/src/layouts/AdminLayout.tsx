@@ -1,6 +1,6 @@
 import { Outlet, NavLink, Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { AccessibilityAssistant } from '@/components/common/AccessibilityAssistant';
+import { GlobalAIAssistant } from '@/features/assistance/components/GlobalAIAssistant';
 
 const ADMIN_LINKS = [
     { path: '/admin/dashboard', label: 'Dashboard' },
@@ -78,9 +78,9 @@ export default function AdminLayout() {
                 </header>
 
                 {/* Scrollable Content */}
-                <main className="flex-1 overflow-auto p-6 md:p-8">
-                    <AccessibilityAssistant />
+                <main className="flex-1 overflow-auto p-6 md:p-8 relative">
                     <Outlet />
+                    <GlobalAIAssistant />
                 </main>
             </div>
         </div>

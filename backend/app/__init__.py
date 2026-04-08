@@ -58,6 +58,9 @@ def create_app():
     from .routes.admin_routes import admin_bp
     app.register_blueprint(admin_bp)
 
+    from .routes.assistance_routes import assistance_bp
+    app.register_blueprint(assistance_bp)
+
     # Session teardown
     @app.teardown_appcontext
     def remove_session(exception=None):

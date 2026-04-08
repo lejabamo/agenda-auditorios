@@ -6,11 +6,12 @@ import { processQuery, type AssistanceResponse } from '../logic/AssistanceEngine
 import { ListResponse, AvailabilityList } from './ResponseComponents';
 import { AccessibleAdminWizard } from './AccessibleAdminWizard';
 
-export const DashboardAssistant = () => {
+export const DashboardAssistant = ({ isGlobal = false }: { isGlobal?: boolean }) => {
     const [query, setQuery] = useState('');
     const [response, setResponse] = useState<AssistanceResponse | null>(null);
     const [conversationState, setConversationState] = useState<any>(null);
     const [wizardContext, setWizardContext] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const { data: auditorios = [] } = useQuery({
@@ -25,21 +26,27 @@ export const DashboardAssistant = () => {
         staleTime: 1000 * 30
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!query.trim()) return;
+        if (!query.trim() || loading) return;
 
-        const res = processQuery(query, rawEvents, auditorios, conversationState);
-        setResponse(res);
-        setConversationState(res.newState || null);
-        
-        if (res.intent === 'START_BOOKING' && res.data) {
-            setWizardContext(res.data);
-        } else {
-            setWizardContext(null); // Clear wizard if another intent arises
+        setLoading(true);
+        try {
+            const res = await processQuery(query, rawEvents, auditorios, conversationState);
+            setResponse(res);
+            setConversationState(res.newState || null);
+            
+            if (res.intent === 'START_BOOKING' && res.data) {
+                setWizardContext(res.data);
+            } else {
+                setWizardContext(null); 
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+            setQuery('');
         }
-        
-        setQuery('');
     };
 
     const handleWizardSuccess = (message: string) => {
@@ -53,32 +60,36 @@ export const DashboardAssistant = () => {
 
     return (
         <section 
-            className="bg-white rounded-lg shadow-sm border-2 border-indigo-100 overflow-hidden" 
+            className={`${isGlobal ? 'bg-white' : 'bg-white rounded-lg shadow-sm border-2 border-indigo-100 overflow-hidden'}`} 
             aria-labelledby="assistant-heading"
         >
-            <div className="bg-indigo-600 px-6 py-3 flex items-center justify-between">
-                <h2 id="assistant-heading" className="text-white font-bold text-sm flex items-center gap-2">
-                    <span role="img" aria-label="Robot">🤖</span> Asistente de Agenda Inteligente (Beta)
-                </h2>
-                <span className="text-indigo-100 text-[10px] uppercase font-bold tracking-wider">Módulo Experimental</span>
-            </div>
+            {!isGlobal && (
+                <div className="bg-indigo-600 px-6 py-3 flex items-center justify-between">
+                    <h2 id="assistant-heading" className="text-white font-bold text-sm flex items-center gap-2">
+                        <span role="img" aria-label="Robot">🤖</span> Asistente de Agenda Inteligente (Beta)
+                    </h2>
+                    <span className="text-indigo-100 text-[10px] uppercase font-bold tracking-wider">Módulo Experimental</span>
+                </div>
+            )}
 
             <div className="p-6">
                 <form onSubmit={handleSubmit} className="relative">
                     <input
                         ref={inputRef}
                         type="text"
-                        className="w-full pl-4 pr-24 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                        placeholder="Escribe: ¿Qué hay libre mañana? o ¿Agenda de la semana?"
+                        disabled={loading}
+                        className="w-full pl-4 pr-24 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none disabled:opacity-50"
+                        placeholder={loading ? "Procesando con IA..." : "Escribe: ¿Qué hay libre mañana? o ¿Agenda de la semana?"}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         aria-label="Pregunta al asistente"
                     />
                     <button 
                         type="submit"
-                        className="absolute right-2 top-1.5 bottom-1.5 px-4 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors"
+                        disabled={loading}
+                        className="absolute right-2 top-1.5 bottom-1.5 px-4 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
                     >
-                        Preguntar
+                        {loading ? '...' : 'Preguntar'}
                     </button>
                 </form>
 
