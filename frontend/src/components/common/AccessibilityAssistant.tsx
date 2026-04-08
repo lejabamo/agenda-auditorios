@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format, parse } from 'date-fns';
 import { es } from 'date-fns/locale/es';
@@ -22,6 +22,13 @@ export const AccessibilityAssistant = () => {
         queryFn: () => eventoService.getEvents({}),
         staleTime: 1000 * 30
     });
+
+    // Auto-select if only one auditorium exists
+    useEffect(() => {
+        if (auditorios.length === 1 && !audit) {
+            setAudit(String(auditorios[0].id));
+        }
+    }, [auditorios, audit]);
 
     const handleCheck = (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,14 +80,23 @@ export const AccessibilityAssistant = () => {
                 </button>
             </div>
             <form onSubmit={handleCheck} className="flex flex-wrap gap-3 items-end">
-                <div className="flex-1 min-w-[200px]">
-                    <label htmlFor="acc-aud-global" className="block text-[10px] uppercase font-bold text-blue-700 mb-1">Auditorio</label>
-                    <select id="acc-aud-global" value={audit} onChange={e => setAudit(e.target.value)} required 
-                        className="w-full border border-blue-300 rounded px-2 py-1.5 text-sm bg-white">
-                        <option value="">Seleccione un auditorio...</option>
-                        {(auditorios as any[]).map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
-                    </select>
-                </div>
+                {auditorios.length > 1 ? (
+                    <div className="flex-1 min-w-[200px]">
+                        <label htmlFor="acc-aud-global" className="block text-[10px] uppercase font-bold text-blue-700 mb-1">Auditorio</label>
+                        <select id="acc-aud-global" value={audit} onChange={e => setAudit(e.target.value)} required 
+                            className="w-full border border-blue-300 rounded px-2 py-1.5 text-sm bg-white">
+                            <option value="">Seleccione un auditorio...</option>
+                            {(auditorios as any[]).map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
+                        </select>
+                    </div>
+                ) : (
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-[10px] uppercase font-bold text-blue-700 mb-1">Auditorio</label>
+                        <div className="w-full border border-blue-200 bg-blue-100/50 rounded px-2 py-1.5 text-sm text-blue-800 font-medium">
+                            {auditorios[0]?.nombre || 'Auditorio Filomena'}
+                        </div>
+                    </div>
+                )}
                 <div className="w-40">
                     <label htmlFor="acc-date-global" className="block text-[10px] uppercase font-bold text-blue-700 mb-1">Fecha a consultar</label>
                     <input id="acc-date-global" type="date" value={searchDate} onChange={e => setSearchDate(e.target.value)} required
