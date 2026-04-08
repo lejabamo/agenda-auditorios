@@ -4,6 +4,7 @@ import { eventoService } from '@/services/eventoService';
 import { dependenciaService } from '@/services/dependenciaService';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { DashboardAssistant } from '@/features/assistance/components/DashboardAssistant';
 
 export default function AdminDashboardPage() {
     const navigate = useNavigate();
@@ -159,6 +160,9 @@ export default function AdminDashboardPage() {
                     <p className="text-3xl font-bold text-green-600 mt-2">{weeklyOccupancy}%</p>
                 </div>
             </div>
+
+            {/* INTELLIGENT ASSISTANT (Experimental) */}
+            <DashboardAssistant />
 
             {/* MASTER LIST WITH FILTERS */}
             <section className="bg-white rounded-lg shadow-sm border border-[var(--border-color)] overflow-hidden" aria-label="Lista Maestra de Eventos">
