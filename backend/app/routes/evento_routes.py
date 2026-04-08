@@ -182,7 +182,9 @@ def get_evento(id):
             'dependencia_id': evento.dependencia_id,
             'dependencia_nombre': evento.dependencia.nombre if evento.dependencia else "Desconocida",
             'responsable_nombre': evento.responsable_nombre,
-            'created_at': evento.created_at.isoformat(),
+            'responsable_telefono': evento.responsable_telefono,
+            'correo_confirmacion': evento.correo_confirmacion,
+            'created_at': f"{evento.created_at.isoformat()}Z",
         }), 200
     finally:
         session.close()
