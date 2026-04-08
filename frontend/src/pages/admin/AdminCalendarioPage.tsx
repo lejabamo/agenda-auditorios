@@ -24,71 +24,6 @@ function dateToLocalISO(date: string, time: string) {
     return `${date}T${time}:00`;
 }
 
-// ─── Accessibility Assistant Component ──────────────────────────────────────
-const AccessibilityAssistant = ({ RawEvents, Auditorios }: { RawEvents: any[], Auditorios: any[] }) => {
-    const [audit, setAudit] = useState('');
-    const [searchDate, setSearchDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-    const [resultText, setResultText] = useState('');
-
-    const handleCheck = (e: React.FormEvent) => {
-        e.preventDefault();
-        const audObj = Auditorios.find(a => String(a.id) === audit);
-        const audName = audObj?.nombre || 'el auditorio seleccionado';
-        const dayEvents = RawEvents.filter(ev => 
-            ev.fecha_inicio.startsWith(searchDate) && 
-            (!audit || String(ev.auditorio_id) === audit)
-        );
-
-        const morning = dayEvents.some(ev => ev.jornada === 'MAÑANA' || ev.jornada === 'TODO_EL_DIA');
-        const afternoon = dayEvents.some(ev => ev.jornada === 'TARDE' || ev.jornada === 'TODO_EL_DIA');
-
-        let summary = `Resultado para ${audName} el ${format(parse(searchDate, 'yyyy-MM-dd', new Date()), 'eeee d "de" MMMM', { locale: es })}: `;
-
-        if (!morning && !afternoon) {
-            summary += "Está totalmente LIBRE. Puedes agendar en cualquier jornada.";
-        } else if (morning && afternoon) {
-            summary += "Está totalmente OCUPADO durante todo el día.";
-        } else if (morning) {
-            summary += "Está OCUPADO en la mañana, pero LIBRE en la tarde.";
-        } else if (afternoon) {
-            summary += "Está LIBRE en la mañana, pero OCUPADO en la tarde.";
-        }
-
-        setResultText(summary);
-    };
-
-    return (
-        <section className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 shadow-sm" aria-labelledby="acc-title">
-            <h2 id="acc-title" className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <span aria-hidden="true">🎧</span> Asistente de Consulta Rápida (Accesibilidad)
-            </h2>
-            <form onSubmit={handleCheck} className="flex flex-wrap gap-3 items-end">
-                <div className="flex-1 min-w-[200px]">
-                    <label htmlFor="acc-aud" className="block text-xs font-semibold text-blue-700 mb-1">Auditorio</label>
-                    <select id="acc-aud" value={audit} onChange={e => setAudit(e.target.value)} required 
-                        className="w-full border border-blue-300 rounded px-2 py-1.5 text-sm bg-white">
-                        <option value="">Seleccione un auditorio...</option>
-                        {Auditorios.map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
-                    </select>
-                </div>
-                <div className="w-40">
-                    <label htmlFor="acc-date" className="block text-xs font-semibold text-blue-700 mb-1">Fecha a consultar</label>
-                    <input id="acc-date" type="date" value={searchDate} onChange={e => setSearchDate(e.target.value)} required
-                        className="w-full border border-blue-300 rounded px-2 py-1.5 text-sm bg-white" />
-                </div>
-                <button type="submit" className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-1.5 rounded text-sm font-bold shadow-sm transition-colors">
-                    Consultar Disponibilidad
-                </button>
-            </form>
-            {resultText && (
-                <div className="mt-4 p-3 bg-white border-l-4 border-blue-600 rounded shadow-inner" aria-live="assertive" role="status">
-                    <p className="text-sm text-gray-800 font-medium">{resultText}</p>
-                </div>
-            )}
-        </section>
-    );
-};
-
 // ─── Custom Event Chip ────────────────────────────────────────────────────────
 const CustomEvent = ({ event }: any) => (
     <div className="flex flex-col h-full overflow-hidden p-0.5">
@@ -380,9 +315,6 @@ export default function AdminCalendarioPage() {
                     ))}
                 </select>
             </div>
-
-            {/* Accessibility Assistant */}
-            <AccessibilityAssistant RawEvents={rawEvents} Auditorios={auditorios} />
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 text-xs font-medium bg-white p-3 rounded-lg border border-[var(--border-color)]">
