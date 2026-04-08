@@ -4,10 +4,13 @@ import { eventoService } from '@/services/eventoService';
 import { auditorioService } from '@/services/auditorioService';
 import { processQuery, type AssistanceResponse } from '../logic/AssistanceEngine';
 import { ListResponse, AvailabilityList } from './ResponseComponents';
+import { AccessibleAdminWizard } from './AccessibleAdminWizard';
 
 export const DashboardAssistant = () => {
     const [query, setQuery] = useState('');
     const [response, setResponse] = useState<AssistanceResponse | null>(null);
+    const [conversationState, setConversationState] = useState<any>(null);
+    const [wizardContext, setWizardContext] = useState<any>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const { data: auditorios = [] } = useQuery({
@@ -26,9 +29,26 @@ export const DashboardAssistant = () => {
         e.preventDefault();
         if (!query.trim()) return;
 
-        const res = processQuery(query, rawEvents, auditorios);
+        const res = processQuery(query, rawEvents, auditorios, conversationState);
         setResponse(res);
+        setConversationState(res.newState || null);
+        
+        if (res.intent === 'START_BOOKING' && res.data) {
+            setWizardContext(res.data);
+        } else {
+            setWizardContext(null); // Clear wizard if another intent arises
+        }
+        
         setQuery('');
+    };
+
+    const handleWizardSuccess = (message: string) => {
+        setWizardContext(null);
+        setResponse({
+            intent: 'GREETING',
+            text: message,
+            displayType: 'text'
+        });
     };
 
     return (
@@ -80,10 +100,20 @@ export const DashboardAssistant = () => {
                                 {response.intent === 'AVAILABILITY' && response.data && (
                                     <AvailabilityList data={response.data} title="Disponibilidad por auditorio:" />
                                 )}
+
+                                {response.intent === 'START_BOOKING' && wizardContext && (
+                                    <AccessibleAdminWizard 
+                                        targetDate={wizardContext.targetDate}
+                                        auditorioId={wizardContext.auditorioId}
+                                        auditorioNombre={wizardContext.auditorioNombre}
+                                        onClose={() => setWizardContext(null)}
+                                        onSuccess={handleWizardSuccess}
+                                    />
+                                )}
                             </div>
                         </div>
                         <button 
-                            onClick={() => setResponse(null)}
+                            onClick={() => { setResponse(null); setWizardContext(null); setConversationState(null); }}
                             className="mt-4 text-[10px] text-gray-400 hover:text-gray-600 font-bold uppercase tracking-widest"
                         >
                             Limpiar Respuesta
