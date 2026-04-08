@@ -191,7 +191,28 @@ export default function AdminCalendarioPage() {
         };
     };
 
+    // ── Accessibility: dayPropGetter with aria-label describing events per day (Ítem 3)
+    const dayPropGetter = (dayDate: Date) => {
+        const dayStr = format(dayDate, 'yyyy-MM-dd');
+        const eventsOnDay = calendarEvents.filter((ev: { start: Date; title: string }) =>
+            format(ev.start, 'yyyy-MM-dd') === dayStr
+        );
+        const ariaLabel = eventsOnDay.length === 0
+            ? `${format(dayDate, 'EEEE d MMMM', { locale: es })}: Sin eventos programados`
+            : `${format(dayDate, 'EEEE d MMMM', { locale: es })}: ${eventsOnDay.length} evento${eventsOnDay.length > 1 ? 's' : ''} — ${eventsOnDay.map((ev: { title: string }) => ev.title).join(', ')}`;
+        return {
+            'aria-label': ariaLabel,
+            title: ariaLabel,
+        };
+    };
+
     const handleSelectEvent = (event: any) => navigate(`/admin/solicitudes/${event.id}`);
+
+    // ── Accessibility (Ítem 2): clic en cabecera de semana/día navega a Vista Día
+    const handleDrillDown = (drillDate: Date) => {
+        setDate(drillDate);
+        setView(Views.DAY);
+    };
 
     const handleSelectSlot = (slotInfo: { start: Date; action: string }) => {
         if (view === Views.MONTH) {
@@ -311,6 +332,13 @@ export default function AdminCalendarioPage() {
                     .rbc-event:focus { outline: 2px solid var(--primary-color); outline-offset: 2px; }
                     .rbc-time-slot { cursor: pointer; }
                     .rbc-time-slot:hover { background-color: #f3f4f6; }
+                    /* Ítem 1 & 2: cabeceras de día clicables */
+                    .rbc-header { cursor: pointer !important; }
+                    .rbc-header:hover { background-color: #e8f0fe !important; }
+                    .rbc-header a { pointer-events: none; }
+                    /* Ítem 1: gutter de hora clicable */
+                    .rbc-time-gutter .rbc-timeslot-group { cursor: pointer; }
+                    .rbc-time-gutter .rbc-timeslot-group:hover .rbc-label { color: var(--primary-color); font-weight: bold; }
                 `}</style>
                 <Calendar
                     localizer={localizer}
@@ -332,7 +360,10 @@ export default function AdminCalendarioPage() {
                     selectable={true}
                     onSelectEvent={handleSelectEvent}
                     onSelectSlot={handleSelectSlot}
+                    onDrillDown={handleDrillDown}
+                    drilldownView={Views.DAY}
                     eventPropGetter={eventPropGetter}
+                    dayPropGetter={dayPropGetter}
                     popup={true}
                     messages={{ today: "Hoy", previous: "Anterior", next: "Siguiente", month: "Mes", week: "Semana", day: "Día", agenda: "Agenda", date: "Fecha", time: "Hora", event: "Evento" }}
                 />

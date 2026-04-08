@@ -247,6 +247,10 @@ const InstitutionalDisclaimerModal: React.FC<InstitutionalDisclaimerModalProps> 
                                     <strong>Dayra Milena Achicanoy Achicanoy</strong><br />
                                     <span>Profesional Universitario - Administrativa y Financiera</span>
                                 </p>
+                                <p className="idm-contact-person" style={{ marginTop: '0.5rem', borderTop: '1px solid #e5e7eb', paddingTop: '0.5rem' }}>
+                                    <strong>Diego Fernando López</strong><br />
+                                    <span>Cel. <a href="tel:3128474005" style={{ color: 'inherit' }}>312 847 4005</a></span>
+                                </p>
                             </div>
                         </div>
                     </div>
