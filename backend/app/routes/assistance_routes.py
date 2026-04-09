@@ -34,12 +34,11 @@ def process_query():
             return jsonify({"error": "No query provided"}), 400
 
         system_prompt = f"""
-        You are a NLU (Natural Language Understanding) engine for an auditorium booking system.
+        You are a ROBUST NLU (Natural Language Understanding) engine for an auditorium booking system.
         Today's date is {today} (day of week: {datetime.strptime(today, '%Y-%m-%d').strftime('%A')}).
         
-        Translate the user's query into a structured JSON object. 
-        Important: If the user asks for "esta semana" or "la otra semana", set range to "week".
-        If they ask for specific jornadas like "por la tarde", set jornada to "TARDE".
+        CRITICAL: The user might have typos (e.g., "procima" instead of "próxima", "osupado" instead of "ocupado").
+        Ignore grammar/spelling errors and focus on the user's intent.
         
         Intent types: 
         - 'AVAILABILITY': Asking if a slot or range is free.
@@ -49,16 +48,16 @@ def process_query():
         Output format (STRICT JSON):
         {{
             "intent": "AVAILABILITY" | "AGENDA" | "GREETING" | "UNKNOWN",
-            "date": "YYYY-MM-DD" (the specific date or the START of the range),
+            "date": "YYYY-MM-DD" (calculate relative to {today}),
             "jornada": "MAÑANA" | "TARDE" | "TODO_EL_DIA" | null,
             "range": "week" | "month" | "day" | null,
-            "reasoning": "short explanation of date calculation"
+            "reasoning": "short explanation"
         }}
         
         Examples:
-        - "¿Qué tardes están libres la próxima semana?" -> {{"intent": "AVAILABILITY", "date": "2026-04-13", "jornada": "TARDE", "range": "week", "reasoning": "Next monday"}}
-        - "¿Qué hay para mañana?" -> {{"intent": "AGENDA", "date": "{today} + 1 day", "jornada": null, "range": "day", "reasoning": "Tomorrow"}}
-        - "hay algo libre el viernes 10?" -> {{"intent": "AVAILABILITY", "date": "2026-04-10", "jornada": "TODO_EL_DIA", "range": "day", "reasoning": "Specific date"}}
+        - "que hay libre la procima semana?" -> {{"intent": "AVAILABILITY", "date": "next_monday", "jornada": null, "range": "week", "reasoning": "Next week with typos"}}
+        - "esta osupado mañana?" -> {{"intent": "AVAILABILITY", "date": "{today}+1", "jornada": "TODO_EL_DIA", "range": "day", "reasoning": "Tomorrow with typos"}}
+        - "¿que tarde esta libre?" -> {{"intent": "AVAILABILITY", "date": "{today}", "jornada": "TARDE", "range": "day", "reasoning": "Current day afternoon"}}
         
         User query: "{query}"
         Return ONLY valid JSON.

@@ -26,6 +26,17 @@ export const DashboardAssistant = ({ isGlobal = false }: { isGlobal?: boolean })
         staleTime: 1000 * 30
     });
 
+    const speakResponse = (text: string) => {
+        if (!window.speechSynthesis) return;
+        // Cancel previous speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!query.trim() || loading) return;
@@ -36,6 +47,9 @@ export const DashboardAssistant = ({ isGlobal = false }: { isGlobal?: boolean })
             setResponse(res);
             setConversationState(res.newState || null);
             
+            // VOICE FEEDBACK: Read the text response automatically
+            speakResponse(res.text);
+
             if (res.intent === 'START_BOOKING' && res.data) {
                 setWizardContext(res.data);
             } else {
