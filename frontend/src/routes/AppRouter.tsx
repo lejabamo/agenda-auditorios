@@ -16,6 +16,7 @@ import AdminCalendarioPage from '@/pages/admin/AdminCalendarioPage';
 import AdminSolicitudesPage from '@/pages/admin/AdminSolicitudesPage';
 import AdminEntidadesPage from '@/pages/admin/AdminEntidadesPage';
 import AdminAuditoriosPage from '@/pages/admin/AdminAuditoriosPage';
+import AdminAsistentePage from '@/pages/admin/AdminAsistentePage';
 import AdminSolicitudDetailPage from '@/pages/admin/AdminSolicitudDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
@@ -94,6 +95,10 @@ export const router = createBrowserRouter([
             {
                 path: 'auditorios',
                 element: <AdminAuditoriosPage />,
+            },
+            {
+                path: 'asistente',
+                element: <AdminAsistentePage />,
             },
             {
                 path: 'solicitar',

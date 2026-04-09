@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Outlet, NavLink, Navigate } from 'react-router-dom';
+import { Outlet, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { GlobalAIAssistant } from '@/features/assistance/components/GlobalAIAssistant';
 
 const ADMIN_LINKS = [
+    { path: '/admin/asistente', label: 'Asistente de IA', icon: '🤖' },
     { path: '/admin/dashboard', label: 'Dashboard' },
     { path: '/admin/calendario', label: 'Calendario' },
     { path: '/admin/solicitudes', label: 'Solicitudes' },
@@ -13,19 +13,19 @@ const ADMIN_LINKS = [
 
 export default function AdminLayout() {
     const { isAuthenticated, isLoading, logout } = useAuth();
-    const [asstOpen, setAsstOpen] = useState(false);
+    const navigate = useNavigate();
 
-    // Keyboard shortcut (Alt + A)
+    // Only Alt+A keyboard shortcut to jump to the assistant page
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.altKey && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
-                setAsstOpen((prev: boolean) => !prev);
+                navigate('/admin/asistente');
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [navigate]);
 
     if (isLoading) {
         return <div className="flex items-center justify-center h-screen">Cargando...</div>;
@@ -50,30 +50,19 @@ export default function AdminLayout() {
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    {/* ACCESSIBILITY FIRST: AI Assistant Trigger */}
-                    <button
-                        onClick={() => setAsstOpen(true)}
-                        className={`w-full text-left px-4 py-3 rounded-md transition-all flex items-center gap-3 mb-4
-                            ${asstOpen ? 'bg-indigo-600 ring-2 ring-white' : 'bg-indigo-900/50 hover:bg-indigo-800'}
-                        `}
-                        aria-label="Abrir Asistente de Inteligencia Artificial (Atajo Alt + A)"
-                    >
-                        <span className="text-xl">🤖</span>
-                        <span className="font-bold text-sm">Asistente de IA</span>
-                    </button>
-
                     {ADMIN_LINKS.map((link) => (
                         <NavLink
                             key={link.path}
                             to={link.path}
                             className={({ isActive }) =>
-                                `block px-4 py-3 rounded-md transition-colors ${isActive
-                                    ? 'bg-[var(--accent-color)] text-white font-medium'
+                                `flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${isActive
+                                    ? 'bg-[var(--accent-color)] text-white font-medium shadow-md'
                                     : 'text-gray-300 hover:bg-[var(--primary-light)]'
                                 }`
                             }
                         >
-                            {link.label}
+                            {link.icon && <span className="text-xl" aria-hidden="true">{link.icon}</span>}
+                            <span>{link.label}</span>
                         </NavLink>
                     ))}
                 </nav>
@@ -81,7 +70,7 @@ export default function AdminLayout() {
                 <div className="p-4 border-t border-[var(--primary-light)]">
                     <button
                         onClick={logout}
-                        className="w-full px-4 py-2 border border-gray-600 text-sm text-gray-300 rounded hover:bg-[var(--primary-light)]"
+                        className="w-full px-4 py-2 border border-gray-600 text-sm text-gray-300 rounded hover:bg-[var(--primary-light)] transition-colors"
                     >
                         Cerrar Sesión
                     </button>
@@ -106,11 +95,6 @@ export default function AdminLayout() {
                 {/* Scrollable Content */}
                 <main className="flex-1 overflow-auto p-6 md:p-8 relative">
                     <Outlet />
-                    <GlobalAIAssistant 
-                        isOpen={asstOpen} 
-                        onClose={() => setAsstOpen(false)} 
-                        onToggle={() => setAsstOpen(prev => !prev)}
-                    />
                 </main>
             </div>
         </div>
