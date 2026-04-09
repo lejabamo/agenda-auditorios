@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import React from 'react';
 import { DashboardAssistant } from './DashboardAssistant';
 
-export const GlobalAIAssistant = () => {
-    const [isOpen, setIsOpen] = useState(false);
+interface GlobalAssistantProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onToggle: () => void;
+}
+
+export const GlobalAIAssistant: React.FC<GlobalAssistantProps> = ({ isOpen, onClose, onToggle }) => {
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
@@ -11,7 +16,7 @@ export const GlobalAIAssistant = () => {
                     <div className="flex justify-between items-center bg-indigo-700 px-4 py-2">
                         <span className="text-white text-xs font-bold uppercase tracking-widest">Asistente Daredevil AI</span>
                         <button 
-                            onClick={() => setIsOpen(false)}
+                            onClick={onClose}
                             className="text-indigo-100 hover:text-white text-xs font-bold"
                             aria-label="Cerrar asistente"
                         >
@@ -25,7 +30,7 @@ export const GlobalAIAssistant = () => {
             )}
             
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={onToggle}
                 className={`
                     flex items-center gap-3 px-6 py-4 rounded-full font-bold shadow-xl transition-all
                     ${isOpen ? 'bg-indigo-50 text-indigo-700' : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:scale-105 active:scale-95'}

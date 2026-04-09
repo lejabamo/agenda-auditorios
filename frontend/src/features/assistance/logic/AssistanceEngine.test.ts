@@ -35,6 +35,12 @@ describe('AssistanceEngine', () => {
         expect(['AGENDA', 'UNKNOWN']).toContain(response.intent);
     });
 
+    it('should handle week range queries', async () => {
+        const response = await processQuery('¿Qué hay libre la próxima semana?', mockEvents, mockAuditorios);
+        expect(response.intent).toBe('AVAILABILITY');
+        expect(response.text).toContain('Reporte');
+    });
+
     it('should handle unknown queries', async () => {
         const response = await processQuery('quiero una pizza', [], []);
         expect(response.intent).toBe('UNKNOWN');

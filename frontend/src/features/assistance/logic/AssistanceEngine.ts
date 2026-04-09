@@ -16,7 +16,7 @@ export const processQuery = async (query: string, rawEvents: any[], auditorios: 
     const q = query.toLowerCase().trim();
     const today = new Date();
 
-    // 0. CHECK CONVERSATION STATE (Daredevil Action Flow stays local)
+    // 0. CHECK CONVERSATION STATE
     if (contextState && contextState.waitingConfirmation) {
         if (q === 'si' || q === 'sí' || q === 'claro' || q === 'agendar' || q === 'yes') {
             return {
@@ -36,17 +36,17 @@ export const processQuery = async (query: string, rawEvents: any[], auditorios: 
         }
     }
 
-    // 1. GREETINGS (Local for speed)
+    // 1. GREETINGS
     if (q.length < 15 && (q.includes('hola') || q.includes('buenos días') || q.includes('quien eres'))) {
         return {
             intent: 'GREETING',
-            text: '¡Hola! Soy tu asistente de agenda con IA. Puedo decirte qué espacios están libres o mostrarte la agenda de la semana. ¿Qué necesitas saber?',
+            text: '¡Hola! Soy tu asistente de IA. Puedo decirte qué días están libres la próxima semana o qué hay programado para hoy. ¿Qué deseas consultar?',
             displayType: 'text',
             newState: null
         };
     }
 
-    // 2. AI DEEP PROCESSING (Call Backend)
+    // 2. AI DEEP PROCESSING
     try {
         const response = await fetch(`${API_URL}/assistance/process`, {
             method: 'POST',
@@ -59,89 +59,123 @@ export const processQuery = async (query: string, rawEvents: any[], auditorios: 
 
         // 3. EXECUTE LOGIC BASED ON AI INTERPRETATION
         if (interpretation.intent === 'AVAILABILITY') {
-            const targetDate = interpretation.date ? parseISO(interpretation.date) : today;
-            const targetJornada = interpretation.jornada; // MAÑANA / TARDE / TODO_EL_DIA
-            
-            // For now, primary auditorium logic
             const primaryAuditorio = auditorios[0];
-            if (primaryAuditorio) {
-                const events = rawEvents.filter(e => 
-                    isSameDay(parseISO(e.fecha_inicio), targetDate) && 
-                    String(e.auditorio_id) === String(primaryAuditorio.id)
-                );
+            if (!primaryAuditorio) return { intent: 'UNKNOWN', text: 'No encontré auditorios configurados.', displayType: 'text' };
 
-                const hasMorning = events.some(e => e.jornada === 'MAÑANA' || e.jornada === 'TODO_EL_DIA' || e.jornada === 'MANANA');
-                const hasAfternoon = events.some(e => e.jornada === 'TARDE' || e.jornada === 'TODO_EL_DIA');
+            // MULTI-DAY SUPPORT (WEEK)
+            if (interpretation.range === 'week') {
+                const startDate = interpretation.date ? parseISO(interpretation.date) : today;
+                let report = `Reporte de disponibilidad (Próximos 7 días) para ${primaryAuditorio.nombre}:\n\n`;
+                let freeFound = false;
 
-                if (targetJornada === 'MAÑANA' || targetJornada === 'MANANA') {
-                    if (!hasMorning) {
-                        return {
-                            intent: 'AVAILABILITY',
-                            text: `Sí, la mañana del ${format(targetDate, "d 'de' MMMM", { locale: es })} está LIBRE. ¿Deseas agendarlo?`,
-                            displayType: 'text',
-                            newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre }
-                        };
-                    } else {
-                        return { intent: 'AVAILABILITY', text: `Lo siento, la mañana del ${format(targetDate, "d 'de' MMMM", { locale: es })} ya está ocupada.`, displayType: 'text' };
+                for (let i = 0; i < 7; i++) {
+                    const checkDate = new Date(startDate);
+                    checkDate.setDate(startDate.getDate() + i);
+                    
+                    const events = rawEvents.filter(e => 
+                        isSameDay(parseISO(e.fecha_inicio), checkDate) && 
+                        String(e.auditorio_id) === String(primaryAuditorio.id)
+                    );
+
+                    const hasMorning = events.some(e => e.jornada === 'MAÑANA' || e.jornada === 'TODO_EL_DIA');
+                    const hasAfternoon = events.some(e => e.jornada === 'TARDE' || e.jornada === 'TODO_EL_DIA');
+
+                    const dayName = format(checkDate, 'EEEE d', { locale: es });
+                    
+                    if (!hasMorning && !hasAfternoon) {
+                        report += `✅ ${dayName}: LIBRE TODO EL DÍA\n`;
+                        freeFound = true;
+                    } else if (!hasMorning) {
+                        report += `⚖️ ${dayName}: Libre por la MAÑANA\n`;
+                        freeFound = true;
+                    } else if (!hasAfternoon) {
+                        report += `⚖️ ${dayName}: Libre por la TARDE\n`;
+                        freeFound = true;
                     }
                 }
 
-                if (targetJornada === 'TARDE') {
-                    if (!hasAfternoon) {
-                        return {
-                            intent: 'AVAILABILITY',
-                            text: `La tarde del ${format(targetDate, "d 'de' MMMM", { locale: es })} está LIBRE (de 2 PM a 6 PM). ¿Deseas agendarlo?`,
-                            displayType: 'text',
-                            newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre }
-                        };
-                    } else {
-                        return { intent: 'AVAILABILITY', text: `La tarde del ${format(targetDate, "d 'de' MMMM", { locale: es })} ya tiene eventos programados.`, displayType: 'text' };
-                    }
-                }
+                return {
+                    intent: 'AVAILABILITY',
+                    text: freeFound ? report : "Lo siento, parece que todo está ocupado los próximos 7 días.",
+                    displayType: 'text'
+                };
+            }
 
-                // General day check
-                if (!hasMorning && !hasAfternoon) {
+            // SINGLE DAY SUPPORT
+            const targetDate = interpretation.date ? parseISO(interpretation.date) : today;
+            const targetJornada = interpretation.jornada;
+            
+            const events = rawEvents.filter(e => 
+                isSameDay(parseISO(e.fecha_inicio), targetDate) && 
+                String(e.auditorio_id) === String(primaryAuditorio.id)
+            );
+
+            const hasMorning = events.some(e => e.jornada === 'MAÑANA' || e.jornada === 'TODO_EL_DIA' || e.jornada === 'MANANA');
+            const hasAfternoon = events.some(e => e.jornada === 'TARDE' || e.jornada === 'TODO_EL_DIA');
+
+            if (targetJornada === 'MAÑANA' || targetJornada === 'MANANA') {
+                if (!hasMorning) {
                     return {
                         intent: 'AVAILABILITY',
-                        text: `${primaryAuditorio.nombre} está LIBRE todo el día el ${format(targetDate, "d 'de' MMMM", { locale: es })}. ¿Deseas agendar?`,
+                        text: `Sí, la mañana del ${format(targetDate, "d 'de' MMMM", { locale: es })} está LIBRE. ¿Deseas agendarlo?`,
                         displayType: 'text',
-                        newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre }
+                        newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre, jornada: 'MAÑANA' }
                     };
                 }
-                
-                let detailText = `Para el ${format(targetDate, "d 'de' MMMM", { locale: es })}: `;
-                if (hasMorning && hasAfternoon) detailText += "Está totalmente ocupado.";
-                else if (hasMorning) detailText += "Ocupado en la mañana, pero LIBRE en la tarde.";
-                else detailText += "LIBRE en la mañana, pero ocupado en la tarde.";
-
-                return { intent: 'AVAILABILITY', text: detailText, displayType: 'text' };
+                return { intent: 'AVAILABILITY', text: `Lo siento, la mañana del ${format(targetDate, "d 'de' MMMM", { locale: es })} ya tiene un evento.`, displayType: 'text' };
             }
+
+            if (targetJornada === 'TARDE') {
+                if (!hasAfternoon) {
+                    return {
+                        intent: 'AVAILABILITY',
+                        text: `La tarde del ${format(targetDate, "d 'de' MMMM", { locale: es })} está LIBRE (2 PM a 6 PM). ¿Deseas agendarlo?`,
+                        displayType: 'text',
+                        newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre, jornada: 'TARDE' }
+                    };
+                }
+                return { intent: 'AVAILABILITY', text: `La tarde del ${format(targetDate, "d 'de' MMMM", { locale: es })} ya está ocupada.`, displayType: 'text' };
+            }
+
+            if (!hasMorning && !hasAfternoon) {
+                return {
+                    intent: 'AVAILABILITY',
+                    text: `${primaryAuditorio.nombre} está LIBRE todo el día el ${format(targetDate, "d 'de' MMMM", { locale: es })}. ¿Deseas agendar?`,
+                    displayType: 'text',
+                    newState: { waitingConfirmation: true, targetDate: format(targetDate, 'yyyy-MM-dd'), auditorioId: primaryAuditorio.id, auditorioNombre: primaryAuditorio.nombre }
+                };
+            }
+            
+            let detailText = `Para el ${format(targetDate, "d 'de' MMMM", { locale: es })}: `;
+            if (hasMorning && hasAfternoon) detailText += "Está totalmente ocupado.";
+            else if (hasMorning) detailText += "Ocupado en la mañana, pero LIBRE en la tarde.";
+            else detailText += "LIBRE en la mañana, pero ocupado en la tarde.";
+
+            return { intent: 'AVAILABILITY', text: detailText, displayType: 'text' };
         }
 
         if (interpretation.intent === 'AGENDA') {
-             // Basic daily filter for now, can be expanded to range filter if interpretation.range is 'week'
              const targetDate = interpretation.date ? parseISO(interpretation.date) : today;
              const dayEvents = rawEvents.filter(e => isSameDay(parseISO(e.fecha_inicio), targetDate));
              
              if (dayEvents.length === 0) {
-                 return { intent: 'AGENDA', text: `No hay eventos para el ${format(targetDate, "d 'de' MMMM", { locale: es })}.`, displayType: 'text' };
+                 return { intent: 'AGENDA', text: `No hay eventos registrados para el ${format(targetDate, "d 'de' MMMM", { locale: es })}.`, displayType: 'text' };
              }
              return {
                  intent: 'AGENDA',
-                 text: `Eventos para el ${format(targetDate, "d 'de' MMMM", { locale: es })}:`,
+                 text: `Agenda para el ${format(targetDate, "d 'de' MMMM", { locale: es })}:`,
                  data: dayEvents,
                  displayType: 'list'
              };
         }
 
     } catch (err) {
-        console.error("Assistance Engine V2 Error:", err);
+        console.error("Assistance Engine Error:", err);
     }
-
 
     return {
         intent: 'UNKNOWN',
-        text: 'No estoy seguro. Prueba algo como: "¿Qué hay libre mañana tarde?", "¿Agenda del lunes?" o "¿Está disponible el viernes 10?".',
+        text: 'Lo siento, no entendí bien la consulta. Prueba con: "¿Qué hay libre la próxima semana?", "¿Está disponible mañana tarde?" o "Agenda de hoy".',
         displayType: 'text',
         newState: null
     };

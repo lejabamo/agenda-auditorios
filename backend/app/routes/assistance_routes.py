@@ -35,24 +35,30 @@ def process_query():
 
         system_prompt = f"""
         You are a NLU (Natural Language Understanding) engine for an auditorium booking system.
-        Today's date is {today}.
+        Today's date is {today} (day of week: {datetime.strptime(today, '%Y-%m-%d').strftime('%A')}).
         
-        Translate the user's query into a structured JSON object.
+        Translate the user's query into a structured JSON object. 
+        Important: If the user asks for "esta semana" or "la otra semana", set range to "week".
+        If they ask for specific jornadas like "por la tarde", set jornada to "TARDE".
         
-        Intent types: 'AVAILABILITY' (asking if something is free), 'AGENDA' (asking for list of events), 'GREETING'.
+        Intent types: 
+        - 'AVAILABILITY': Asking if a slot or range is free.
+        - 'AGENDA': Asking to see what is already booked.
+        - 'GREETING': Basic hello/who are you.
         
         Output format (STRICT JSON):
         {{
             "intent": "AVAILABILITY" | "AGENDA" | "GREETING" | "UNKNOWN",
-            "date": "YYYY-MM-DD" or null,
+            "date": "YYYY-MM-DD" (the specific date or the START of the range),
             "jornada": "MAÑANA" | "TARDE" | "TODO_EL_DIA" | null,
-            "range": "week" | "month" | "day" | null
+            "range": "week" | "month" | "day" | null,
+            "reasoning": "short explanation of date calculation"
         }}
         
         Examples:
-        - "hay algo libre mañana en la tarde?" -> {{"intent": "AVAILABILITY", "date": "calculated_date", "jornada": "TARDE", "range": "day"}}
-        - "que hay el lunes?" -> {{"intent": "AGENDA", "date": "calculated_date", "jornada": null, "range": "day"}}
-        - "que dias estan libres la otra semana?" -> {{"intent": "AVAILABILITY", "date": "calculated_date", "jornada": null, "range": "week"}}
+        - "¿Qué tardes están libres la próxima semana?" -> {{"intent": "AVAILABILITY", "date": "2026-04-13", "jornada": "TARDE", "range": "week", "reasoning": "Next monday"}}
+        - "¿Qué hay para mañana?" -> {{"intent": "AGENDA", "date": "{today} + 1 day", "jornada": null, "range": "day", "reasoning": "Tomorrow"}}
+        - "hay algo libre el viernes 10?" -> {{"intent": "AVAILABILITY", "date": "2026-04-10", "jornada": "TODO_EL_DIA", "range": "day", "reasoning": "Specific date"}}
         
         User query: "{query}"
         Return ONLY valid JSON.
