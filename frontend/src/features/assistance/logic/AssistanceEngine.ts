@@ -169,13 +169,23 @@ export const processQuery = async (query: string, rawEvents: any[], auditorios: 
              };
         }
 
+        if (interpretation.intent === 'GREETING') {
+            return {
+                intent: 'GREETING',
+                text: '¡Hola! Soy tu asistente de IA. ¿En qué puedo ayudarte hoy? Puedo verificar disponibilidad o mostrarte la agenda.',
+                displayType: 'text'
+            };
+        }
+
     } catch (err) {
         console.error("Assistance Engine Error:", err);
     }
 
+    // Default Fallback
+    console.warn("Assistance Engine: Fallback triggered for query:", query);
     return {
         intent: 'UNKNOWN',
-        text: 'Lo siento, no entendí bien la consulta. Prueba con: "¿Qué hay libre la próxima semana?", "¿Está disponible mañana tarde?" o "Agenda de hoy".',
+        text: 'Lo siento, no entendí bien la consulta o no pude procesar la respuesta. Prueba con algo más específico como: "¿Qué tardes hay libres la próxima semana?" o "Agenda de mañana".',
         displayType: 'text',
         newState: null
     };
