@@ -2,7 +2,6 @@ import os
 import logging
 import json
 from flask import Blueprint, request, jsonify
-import google.generativeai as genai
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -13,15 +12,29 @@ def check_status():
     import os
     try:
         api_key = os.environ.get("GEMINI_API_KEY", "")
+        lib_ok = False
+        try:
+            import google.generativeai
+            lib_ok = True
+        except ImportError:
+            lib_ok = False
+
         return jsonify({
             "status": "online",
             "has_key": len(api_key) > 0,
-            "key_length": len(api_key)
+            "key_length": len(api_key),
+            "library_installed": lib_ok
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 def get_gemini_response(prompt):
+    try:
+        import google.generativeai as genai
+    except ImportError:
+        logger.error("google-generativeai NOT INSTALLED")
+        return None
+
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         logger.error("GEMINI_API_KEY not found in environment!")
