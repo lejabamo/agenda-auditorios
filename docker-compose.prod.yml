@@ -11,6 +11,8 @@
 services:
   backend:
     restart: always
+    env_file:
+      - .env
     environment:
       # ── Seguridad ────────────────────────────────────────────────────────────
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
@@ -34,6 +36,7 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
       ADMIN_NOTIFICATION_EMAIL: ${ADMIN_NOTIFICATION_EMAIL}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
 
     # En producción se usa gunicorn en vez de flask run (más robusto)
     command: [ "gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:create_app()" ]
