@@ -65,21 +65,29 @@ def process_query():
         
         raw_response = get_gemini_response(system_prompt)
         if not raw_response:
-            return jsonify({"error": "AI service unavailable"}), 503
+            logger.error("Empty response from Gemini")
+            return jsonify({"error": "AI service returned empty response"}), 503
             
-        # Clean response if LLM adds markdown backticks
+        # Hardened JSON extraction
         json_str = raw_response.strip()
-        if json_str.startswith("```json"):
-            json_str = json_str[7:-3]
-        elif json_str.startswith("```"):
-            json_str = json_str[3:-3]
+        # Remove markdown code blocks if present
+        if "```json" in json_str:
+            json_str = json_str.split("```json")[-1].split("```")[0].strip()
+        elif "```" in json_str:
+            json_str = json_str.split("```")[-1].split("```")[0].strip()
             
-        interpretation = json.loads(json_str.strip())
-        
-        return jsonify({
-            "success": True,
-            "interpretation": interpretation
-        })
+        try:
+            interpretation = json.loads(json_str)
+            return jsonify({
+                "success": True,
+                "interpretation": interpretation
+            })
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON from AI: {json_str}")
+            return jsonify({
+                "error": "Invalid JSON from AI",
+                "raw": json_str[:200]
+            }), 500
 
     except Exception as e:
         logger.exception("Error in assistance/process")

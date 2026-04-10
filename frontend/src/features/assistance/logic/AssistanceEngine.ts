@@ -177,8 +177,14 @@ export const processQuery = async (query: string, rawEvents: any[], auditorios: 
             };
         }
 
-    } catch (err) {
+    } catch (err: any) {
         console.error("Assistance Engine Error:", err);
+        return {
+            intent: 'UNKNOWN',
+            text: `Hubo un problema técnico (${err.message}). Asegúrate de que la API Key de Google esté configurada correctamente en el servidor.`,
+            displayType: 'text',
+            newState: null
+        };
     }
 
     // Default Fallback
