@@ -10,12 +10,16 @@ assistance_bp = Blueprint('assistance', __name__, url_prefix='/api/assistance')
 
 @assistance_bp.route('/check', methods=['GET'])
 def check_status():
-    api_key = os.environ.get("GEMINI_API_KEY")
-    return jsonify({
-        "status": "online",
-        "has_key": api_key is not None,
-        "key_prefix": api_key[:5] if api_key else None
-    })
+    import os
+    try:
+        api_key = os.environ.get("GEMINI_API_KEY", "")
+        return jsonify({
+            "status": "online",
+            "has_key": len(api_key) > 0,
+            "key_length": len(api_key)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 def get_gemini_response(prompt):
     api_key = os.environ.get("GEMINI_API_KEY")
