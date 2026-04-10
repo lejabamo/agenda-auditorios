@@ -48,5 +48,16 @@ services:
       MP_MAX_MESSAGES: 5000
     restart: unless-stopped
 
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: agenda_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   agenda_pgdata:
