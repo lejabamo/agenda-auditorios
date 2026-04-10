@@ -44,8 +44,8 @@ def get_gemini_response(prompt):
     
     try:
         genai.configure(api_key=api_key)
-        # Usamos flash por velocidad y costo
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Usamos pro para máxima compatibilidad
+        model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
