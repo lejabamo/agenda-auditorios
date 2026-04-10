@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Create Dummy .env for CI
+        run: touch .env
+
       - name: Start Backend and DB Services
         run: docker compose -f docker-compose.yml up -d db backend mailpit
 
