@@ -49,7 +49,7 @@ def get_gemini_response(prompt):
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        logger.exception("Error en la llamada a la API de Google Gemini")
+        logger.error(f"DETALLE ERROR GOOGLE GEMINI: {str(e)}")
         return None
 
 @assistance_bp.route('/process', methods=['POST'])
