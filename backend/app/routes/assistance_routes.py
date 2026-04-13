@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+import requests
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 
@@ -12,91 +13,74 @@ def check_status():
     """Ruta de diagnóstico para verificar salud del servicio."""
     try:
         api_key = os.environ.get("GEMINI_API_KEY", "")
-        lib_ok = False
-        try:
-            import google.generativeai
-            lib_ok = True
-        except ImportError:
-            lib_ok = False
-
         return jsonify({
             "status": "online",
             "ready": True,
-            "has_key": len(api_key) > 0,
-            "library_installed": lib_ok,
+            "has_key": len(api_key) > 5,
+            "method": "Direct API (requests)",
             "today": datetime.now().strftime('%Y-%m-%d')
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def get_gemini_response(prompt):
-    """Llamada segura a Gemini AI con manejo de errores robusto."""
-    try:
-        import google.generativeai as genai
-    except ImportError:
-        logger.error("google-generativeai no está instalado en el contenedor")
-        return None
-
+def call_gemini_direct(prompt):
+    """Llamada directa a la API de Google sin usar el SDK."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        logger.error("FALTA GEMINI_API_KEY en el entorno")
+        logger.error("ERROR: GEMINI_API_KEY no encontrada")
         return None
+
+    # URL oficial de la API de Google Gemini (v1)
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
     
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }]
+    }
+
     try:
-        genai.configure(api_key=api_key)
-        # Usamos pro para máxima compatibilidad
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(prompt)
-        return response.text
+        response = requests.post(url, headers=headers, json=payload, timeout=20)
+        # Si falla el flash (404/503), intentamos el pro
+        if response.status_code != 200:
+            logger.info(f"Flash falló ({response.status_code}), intentando con gemini-pro...")
+            url_pro = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={api_key}"
+            response = requests.post(url_pro, headers=headers, json=payload, timeout=20)
+
+        response.raise_for_status()
+        res_json = response.json()
+        return res_json['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
-        logger.error(f"DETALLE ERROR GOOGLE GEMINI: {str(e)}")
+        logger.error(f"FALLO CRITICO API DIRECTA: {str(e)}")
+        if hasattr(e, 'response') and e.response:
+             logger.error(f"RESPUESTA GOOGLE: {e.response.text}")
         return None
 
 @assistance_bp.route('/process', methods=['POST'])
 def process_query():
-    """Motor de NLU que interpreta lenguaje natural y lo convierte en intenciones JSON."""
+    """Motor de NLU usando llamadas directas HTTP."""
     try:
         data = request.get_json()
         query = data.get('query')
         today = data.get('today', datetime.now().strftime('%Y-%m-%d'))
         
         if not query:
-            return jsonify({"error": "No se proporcionó ninguna consulta"}), 400
+            return jsonify({"error": "Consulta vacía"}), 400
 
-        # Prompt optimizado para tolerancia a errores tipográficos y lenguaje informal
         system_prompt = f"""
-        Eres un motor de interpretación de lenguaje natural (NLU) para un sistema de auditorios.
-        Hoy es {today} (Día: {datetime.now().strftime('%A')}).
+        Eres un NLU para auditorios. Hoy es {today}.
+        Interpreta la intención. SALIDA: JSON estricto.
+        Intenciones: AVAILABILITY, AGENDA, GREETING.
         
-        CRÍTICO: El usuario puede tener errores de ortografía (ej: "procima", "osupado", "libere"). 
-        Ignora los errores y enfócate en la intención.
-        
-        Intenciones posibles: 
-        - 'AVAILABILITY': Pregunta si algo está libre o desocupado.
-        - 'AGENDA': Pregunta qué eventos ya están programados.
-        - 'GREETING': Saludos básicos.
-        
-        Formato de salida (JSON ESTRICTO):
-        {{
-            "intent": "AVAILABILITY" | "AGENDA" | "GREETING",
-            "date": "YYYY-MM-DD" (calcula basado en {today}),
-            "jornada": "MAÑANA" | "TARDE" | "TODO_EL_DIA" | null,
-            "range": "week" | "month" | "day" | null,
-            "reasoning": "breve explicación"
-        }}
-        
-        Ejemplo: "¿que tarde esta libre la proxima semana?" 
-        -> {{"intent": "AVAILABILITY", "date": "próximo lunes", "jornada": "TARDE", "range": "week", "reasoning": "Semana próxima tarde"}}
-        
-        Consulta del usuario: "{query}"
-        Responde SOLO el JSON.
+        Usuario dice: "{query}"
         """
         
-        raw_response = get_gemini_response(system_prompt)
+        raw_response = call_gemini_direct(system_prompt)
+        
         if not raw_response:
-            return jsonify({"error": "La IA no respondió o la llave es inválida"}), 503
+            return jsonify({"error": "Error al conectar con la IA de Google"}), 503
             
-        # Limpieza de markdown en la respuesta de la IA
         json_str = raw_response.strip()
         if "```json" in json_str:
             json_str = json_str.split("```json")[-1].split("```")[0].strip()
@@ -105,14 +89,13 @@ def process_query():
             
         try:
             interpretation = json.loads(json_str)
-            return jsonify({
-                "success": True,
-                "interpretation": interpretation
-            })
-        except json.JSONDecodeError:
-            logger.error(f"Error parseando JSON de IA: {json_str}")
-            return jsonify({"error": "Formato de respuesta inválido de la IA"}), 500
+            return jsonify({"success": True, "interpretation": interpretation})
+        except:
+             return jsonify({
+                 "success": True, 
+                 "interpretation": {"intent": "GREETING", "reasoning": "Respuesta directa", "text": raw_response}
+             })
 
     except Exception as e:
-        logger.exception("Error crítico en el procesador de asistencia")
-        return jsonify({"error": "Error interno del motor de asistencia"}), 500
+        logger.exception("Error en process_query")
+        return jsonify({"error": str(e)}), 500
