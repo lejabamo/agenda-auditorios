@@ -48,3 +48,15 @@ services:
 
   db:
     restart: always
+
+  nginx:
+    restart: always
+    networks:
+      - default
+      - agenda_network
+
+networks:
+  agenda_network:
+    name: agenda_network
+    external: true
+
