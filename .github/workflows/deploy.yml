@@ -78,6 +78,9 @@ jobs:
             # 2. Bajar los servicios antiguos a prueba de fallos
             docker compose -f docker-compose.yml -f docker-compose.prod.yml down || true
             
+            # Asegurar que exista la red de docker global externa
+            docker network create agenda_network || true
+            
             # 3. Construir e iniciar la nueva versión
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
             
