@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useNavigate } from 'react-router-dom';
 import { eventoService, ApiError } from '@/services/eventoService';
 import { auditorioService } from '@/services/auditorioService';
+import { parseNaiveISO } from '@/utils/dateUtils';
 
 // ─── Localizer ────────────────────────────────────────────────────────────────
 const locales = { 'es': es };
@@ -171,8 +172,8 @@ export default function AdminCalendarioPage() {
     const calendarEvents = rawEvents.map((e: any) => ({
         id: e.id,
         title: `${e.auditorio_nombre}: ${e.titulo || 'Evento'}`,
-        start: new Date(e.fecha_inicio),
-        end: new Date(e.fecha_fin),
+        start: parseNaiveISO(e.fecha_inicio),
+        end: parseNaiveISO(e.fecha_fin),
         status: e.estado,
         resource: e
     }));

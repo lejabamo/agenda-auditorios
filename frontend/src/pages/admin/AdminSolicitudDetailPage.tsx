@@ -6,6 +6,7 @@ import { es } from 'date-fns/locale/es';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { eventoService } from '@/services/eventoService';
+import { parseNaiveISO } from '@/utils/dateUtils';
 
 // B2: Rejection Reasons
 const RECHAZO_MOTIVOS = [
@@ -122,7 +123,7 @@ export default function AdminSolicitudDetailPage() {
     if (error || !evento) return <div className="p-12 text-center text-red-600">Error al cargar la solicitud</div>;
 
     // --- WARNINGS & BLOCKING LOGIC ---
-    const eventDate = new Date(evento.fecha_inicio);
+    const eventDate = parseNaiveISO(evento.fecha_inicio);
     const now = new Date(); // In production, consider server time sync
     const isToday = eventDate.toDateString() === now.toDateString();
 
@@ -162,8 +163,8 @@ export default function AdminSolicitudDetailPage() {
         if (!evento) return true;
         return !auditorioEvents.some((e: any) => {
             if (e.id === evento.id) return false; // Ignore self
-            const eStart = new Date(e.fecha_inicio);
-            const eEnd = new Date(e.fecha_fin);
+            const eStart = parseNaiveISO(e.fecha_inicio);
+            const eEnd = parseNaiveISO(e.fecha_fin);
             return (eStart < end && eEnd > start) && ['APROBADO', 'PENDIENTE', 'BLOQUEO_TEMPORAL'].includes(e.estado);
         });
     };
@@ -173,8 +174,8 @@ export default function AdminSolicitudDetailPage() {
 
         // Derive the actual booked window from real timestamps (more reliable than jornada string,
         // especially for holds that may store an incorrect jornada value)
-        const eventStart = new Date(evento.fecha_inicio);
-        const eventEnd = new Date(evento.fecha_fin);
+        const eventStart = parseNaiveISO(evento.fecha_inicio);
+        const eventEnd = parseNaiveISO(evento.fecha_fin);
         const startHour = eventStart.getHours();   // e.g. 8
         const endHour = eventEnd.getHours();     // e.g. 12
 

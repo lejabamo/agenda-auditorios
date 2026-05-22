@@ -4,6 +4,7 @@ import { eventoService } from '@/services/eventoService';
 import { dependenciaService } from '@/services/dependenciaService';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { parseNaiveISO } from '@/utils/dateUtils';
 
 export default function AdminDashboardPage() {
     const navigate = useNavigate();
@@ -41,10 +42,10 @@ export default function AdminDashboardPage() {
     // Urgent Alerts: Pending requests for today or tomorrow
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     const alertasUrgentes = solicitudesPendientes.filter((e: any) => {
-        const eventDate = new Date(e.fecha_inicio);
+        const eventDate = parseNaiveISO(e.fecha_inicio);
         const diff = eventDate.getTime() - now.getTime();
         return diff >= 0 && diff <= (ONE_DAY_MS * 1.5); // Roughly next 36 hours
-    }).sort((a: any, b: any) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime());
+    }).sort((a: any, b: any) => parseNaiveISO(a.fecha_inicio).getTime() - parseNaiveISO(b.fecha_inicio).getTime());
 
     // Active Filters Logic for the Master List
     const filteredEvents = events.filter((e: any) => {
@@ -60,7 +61,7 @@ export default function AdminDashboardPage() {
         if (filterEstado && e.estado !== filterEstado) return false;
 
         return true;
-    }).sort((a: any, b: any) => new Date(b.fecha_solicitud || b.fecha_inicio).getTime() - new Date(a.fecha_solicitud || a.fecha_inicio).getTime());
+    }).sort((a: any, b: any) => parseNaiveISO(b.fecha_solicitud || b.fecha_inicio).getTime() - parseNaiveISO(a.fecha_solicitud || a.fecha_inicio).getTime());
 
     // Basic Occupancy logic (Approved / Total * 100) weekly
     const startOfWeek = new Date(now);
@@ -69,7 +70,7 @@ export default function AdminDashboardPage() {
     endOfWeek.setDate(now.getDate() + (6 - now.getDay()));
 
     const eventsThisWeek = events.filter((e: any) => {
-        const bd = new Date(e.fecha_inicio);
+        const bd = parseNaiveISO(e.fecha_inicio);
         return bd >= startOfWeek && bd <= endOfWeek && e.estado !== 'RECHAZADO';
     });
     const approvedThisWeek = eventsThisWeek.filter((e: any) => e.estado === 'APROBADO');

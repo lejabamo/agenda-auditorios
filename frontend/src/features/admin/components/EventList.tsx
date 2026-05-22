@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { parseNaiveISO } from '@/utils/dateUtils';
 
 interface EventoSummary {
     id: number;
@@ -78,10 +79,10 @@ export function EventList({ events, onSelect, isLoading }: EventListProps) {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <span className="block capitalize">
-                                    {format(new Date(event.fecha_inicio), 'MMM d, yyyy', { locale: es })}
+                                    {format(parseNaiveISO(event.fecha_inicio), 'MMM d, yyyy', { locale: es })}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                    {format(new Date(event.fecha_inicio), 'p', { locale: es })} - {format(new Date(event.fecha_fin), 'p', { locale: es })}
+                                    {format(parseNaiveISO(event.fecha_inicio), 'p', { locale: es })} - {format(parseNaiveISO(event.fecha_fin), 'p', { locale: es })}
                                 </span>
                             </td>
                             <td className="px-6 py-4">

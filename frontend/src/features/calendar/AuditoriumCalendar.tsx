@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { eventoService } from '@/services/eventoService';
 import { auditorioService } from '@/services/auditorioService';
 import { useBooking } from '@/context/BookingContext';
+import { parseNaiveISO } from '@/utils/dateUtils';
 
 // Setup Localizer
 const locales = {
@@ -105,8 +106,8 @@ export function AuditoriumCalendar({ className = "h-[600px]" }: { className?: st
             const mappedEvents = serverEvents.map((e: any) => ({
                 id: e.id,
                 title: e.titulo || (e.estado === 'APROBADO' ? 'Reservado' : 'Solicitado'),
-                start: new Date(e.fecha_inicio),
-                end: new Date(e.fecha_fin),
+                start: parseNaiveISO(e.fecha_inicio),
+                end: parseNaiveISO(e.fecha_fin),
                 status: e.estado,
                 resource: e
             }));
