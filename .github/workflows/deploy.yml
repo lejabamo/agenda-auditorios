@@ -85,8 +85,8 @@ jobs:
             sleep 5
             docker exec agenda_backend alembic upgrade head
             
-            # 5. Sembrar datos base en producción (Auditorio Filomena) para asegurar disponibilidad
-            docker exec agenda_backend python -c "from app.db import SessionLocal; from app.models.auditorio import Auditorio; s = SessionLocal(); exists = s.query(Auditorio).filter_by(nombre='Auditorio Filomena').first(); (s.add(Auditorio(nombre='Auditorio Filomena', capacidad=60, ubicacion='Sede Central', activo=True)), s.commit()) if not exists else None; s.close()"
+            # 5. Sembrar datos base en producción (Auditorio Filomena y Admin) para asegurar disponibilidad
+            docker exec agenda_backend python -c "from app.db import SessionLocal; from app.models.auditorio import Auditorio; from app.models.admin_user import AdminUser; s = SessionLocal(); s.add(Auditorio(nombre='Auditorio Filomena', capacidad=60, ubicacion='Sede Central', activo=True)) if not s.query(Auditorio).filter_by(nombre='Auditorio Filomena').first() else None; (a := AdminUser(email='admin@example.com', is_active=True), a.set_password('admin123'), s.add(a)) if not s.query(AdminUser).filter_by(email='admin@example.com').first() else None; s.commit(); s.close()"
 
             # 6. Limpieza automática para no llenar el disco del servidor
             docker image prune -a -f
